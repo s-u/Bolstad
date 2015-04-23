@@ -256,5 +256,5 @@ bayes.lin.reg = function(y,x, slope.prior = "flat"
       invisible(list(post.coef=c(post.mean.a,post.mean.b),
                      post.coef.sd=c(post.sd.a,post.sd.b)))
   }
-
 }
+

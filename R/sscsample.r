@@ -1,11 +1,10 @@
 sscsample  =  function (size, n.samples, sample.type = "simple",
                         x = NULL, strata = NULL,
-                        cluster = NULL, print = TRUE)
-{
+                        cluster = NULL, print = NULL){
     ## Written initially by:
     ## James M. Curran,
-    ## Dept. of Statistics, University of Waikato
-    ## Hamilton, New Zealand
+    ## Dept. of Statistics, University of Auckland
+    ## Auckland, New Zealand
     ##
     ## Modified, corrected and improved by:
     ## Janko Dietzsch
@@ -34,7 +33,7 @@ sscsample  =  function (size, n.samples, sample.type = "simple",
     #sscsample.data = sscsample.data
 
     if (is.null(x))
-        x  =  sscsample.data$value
+        x  =  sscsample.data$income
 
     nx  =  length(x)
 
@@ -42,7 +41,7 @@ sscsample  =  function (size, n.samples, sample.type = "simple",
         stop("Sample size must be less than population size")
 
     if (is.null(strata))
-        strata  =  sscsample.data$stratum
+        strata  =  sscsample.data$ethnicity
 
     strata.names  =  unique(strata)
     n.strata  =  length(strata.names)
@@ -51,7 +50,7 @@ sscsample  =  function (size, n.samples, sample.type = "simple",
         stop("The length of the strata and data vectors must be equal")
 
     if (is.null(cluster))
-        cluster  =  sscsample.data$cluster
+        cluster  =  sscsample.data$neighborhood
 
     n.clusters  =  length(unique(cluster))
 
@@ -130,10 +129,6 @@ sscsample  =  function (size, n.samples, sample.type = "simple",
     s.strata  =  matrix(0, nrow = n.samples, ncol = n.strata)
     sample.out  =  matrix(0, nrow = size, ncol = n.samples)
 
-    if(print){
-        cat("Sample\tMean   \tStratum 1\tStratum 2\tStratum 3\n")
-        cat("------\t-------\t---------\t---------\t---------\n")
-    }
 
     for (r in 1:n.samples) {
         idx  =  samples[, r]
@@ -141,13 +136,15 @@ sscsample  =  function (size, n.samples, sample.type = "simple",
         for (j in 1:n.strata)
             s.strata[r, j]  =  sum(strata[idx] == strata.names[j])
         sample.out[, r]  =  x[idx]
-       if(print){
-           cat(paste(r, "\t", round(means[r], 4), "\t",
-                     s.strata[r,1], "\t\t", s.strata[r, 2], "\t\t", s.strata[r, 3],
-                     "\n", sep = ""))
-       }
+     }
+    
+    if(!is.null(print)){
+      cat("This argument is deprecated and now ignored\n")
     }
-
-
-    invisible(list(samples = samples, s.strata = s.strata, means = means))
+    
+    results = list(samples = samples, s.strata = s.strata, means = means)
+    class(results) = "sscsamp"
+    
+ 
+    return(results)
 }
