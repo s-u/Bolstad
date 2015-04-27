@@ -71,7 +71,7 @@ binogcp = function(x, n, density = "uniform",
 
       if(maxx<=minx)
         stop("Maximum must be greater than minimum for a uniform prior")
-      pi.prior = dunif(pi,minx,maxx)
+      pi.prior = dunif(pi, minx, maxx)
     }
   }else if (density!="user"){
     stop(paste("Unrecognized density :",density))
@@ -99,8 +99,8 @@ binogcp = function(x, n, density = "uniform",
     lines(pi,pi.prior,lty=2,col="red")
   
     left = min(pi) + diff(range(pi)) * 0.05
-    legend(left,max(posterior, pi.prior), lty = 1:2, col = c("blue", "red"),
-           legend = c("Posterior","Prior"))
+    legend("topleft", bty = "n", lty = 1:2, col = c("blue", "red"),
+           legend = c("Posterior","Prior"), cex = 0.7)
   }
   
   results = list(name = 'pi', param.x = pi, prior = pi.prior, likelihood = likelihood, posterior = posterior,

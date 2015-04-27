@@ -40,7 +40,8 @@ binodp = function(x, n, pi = NULL, pi.prior = NULL, n.pi = 10, plot = TRUE, supp
        xlab=expression(pi),ylab=expression(Probabilty(pi)))
     points(pi,pi.prior,pch=20,col="red")
 
-    legend(max(c(0.05,min(pi))),max(posterior,pi.prior),pch=20,legend = c("Posterior", "Prior"), col = c("blue", "red"))
+    legend("topleft", bty = "n", fill = c("blue", "red"),
+           legend = c("Posterior", "Prior"), cex = 0.7)
   }
   ## calculate the Conditional distribution
 
@@ -82,7 +83,7 @@ binodp = function(x, n, pi = NULL, pi.prior = NULL, n.pi = 10, plot = TRUE, supp
     print(results)
   }
 
-  results = list(name = 'p ', param.x = pi, prior = pi.prior, likelihood = likelihood,
+  results = list(name = 'pi', param.x = pi, prior = pi.prior, likelihood = likelihood,
                 posterior = posterior,
                 pi = pi, pi.prior = pi.prior, ## this duplication is for backward compatibility
                 f.cond = f.cond, f.joint = f.joint, f.marg = f.marg)

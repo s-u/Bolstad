@@ -6,7 +6,7 @@ xdesign = function(x = NULL, y = NULL, corr = 0.8, size = 20,
         x = rnorm(nx)
         y = rnorm(nx)
 
-        y = sqrt(1-corr^2)*y+corr*x
+        y = sqrt(1 - corr^2) * y + corr * x
     }
 
     nx = size * n.treatments

@@ -103,7 +103,8 @@ poisgcp = function(y, density = "normal", params = c(0, 1), n.mu = 100,
          ,main="Shape of continuous prior and posterior for Poisson mean"
          ,type="l",lty=2,col="red")
     lines(mu,posterior,lty=3,col="blue")
-    legend(mu[1],y.max,lty=2:3,col=c("red","blue"),legend=c("Prior","Posterior"))
+    legend("topleft", bty = "n", lty = 2:3, col=c("red", "blue"),
+           legend=c("Prior","Posterior"), cex = 0.7)
   }
   
   results = list(name =  'mu', param.x = mu, prior = mu.prior, likelihood = likelihood, posterior = posterior,

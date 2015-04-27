@@ -1,5 +1,5 @@
 poisdp = function(y.obs, mu, mu.prior, plot = TRUE){
-  if(length(y.obs)==0 || is.null(y.obs))
+  if(length(y.obs) == 0 || is.null(y.obs))
     stop("Error: y.obs must contain at least one value")
 
   if(any(y.obs < 0))
