@@ -7,9 +7,9 @@
   general continuous prior on \eqn{\mu}{mu}
 }
 \usage{
-poisgcp(y, density = "normal", params = c(0,1), n.mu = 100
-       ,mu = NULL, mu.prior = NULL,
-       print.sum.stat = FALSE, alpha=0.05, plot = TRUE, suppressOutput = FALSE)
+poisgcp(y, density = "normal", params = c(0,1), n.mu = 100,
+       mu = NULL, mu.prior = NULL,
+       print.sum.stat = FALSE, alpha = 0.05, plot = TRUE, suppressOutput = FALSE)
 }
 \arguments{
 	\item{y}{A random sample of one or more observations from a

@@ -118,7 +118,13 @@ poisdp = function(y.obs, mu, mu.prior, plot = TRUE){
   
     }
   }
-  results= list(name = 'mu', param.x = mu.prior, prior = mu.prior, likelihood = likelihood, posterior = posterior,
+  mx = sum(mu * posterior)
+  vx = sum((mu - mx)^2 * posterior)
+  
+  results= list(name = 'mu', param.x = mu, prior = mu.prior, likelihood = likelihood, posterior = posterior,
+                mean = mx, var = vx, 
+                cdf = function(m){cumDistFun(m, mu, posterior)},
+                quantileFun = function(probs, ...){qFun(probs, mu, posterior)},
                 mu = mu, mu.prior = mu.prior #for backwards compat. only
                 )
   class(results) = 'Bolstad'

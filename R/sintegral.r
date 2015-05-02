@@ -1,4 +1,4 @@
-sintegral = function(x, fx, n.pts = max(256, length(x)), warn = TRUE){
+sintegral = function(x, fx, n.pts = max(256, length(x)), warn = FALSE){
   ## numerically integrates fx over x using Simpsons rule
   ## x - a sequence of x values
   ## fx - the value of the function to be integrated at x

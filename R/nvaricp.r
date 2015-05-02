@@ -33,7 +33,7 @@ nvaricp = function(y, mu, S0, kappa, cred.int = FALSE, alpha = 0.05, plot = TRUE
     k2 = S1/k1
     k3 = sqrt(k2)
 
-    plot(sigma, prior, type = "l", col = "blue",ylim = c(0,1.1*y.max),
+    plot(sigma, prior, type = "l", col = "blue", ylim = c(0, 1.1 * y.max),
          xlim = c(0,k3),
          main = expression(
              paste("Shape of Inverse ", chi^2," and posterior for ",

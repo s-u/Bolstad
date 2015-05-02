@@ -32,6 +32,8 @@ binobp(x, n, a = 1, b = 1, pi = seq(0.01, 0.999, by = 0.001), plot = TRUE)
   \item{var}{the posterior variance}
   \item{sd}{the posterior std. deviation}
   \item{quantiles}{a set of quantiles from the posterior}
+  \item{cdf}{a cumulative distribution function for the posterior}
+  \item{quantileFun}{a quantile function for the posterior}
 }
 \examples{
 ## simplest call with 6 successes observed in 8 trials and a beta(1,1) uniform
@@ -43,21 +45,21 @@ binobp(6,8,0.5,6)
 
 ## 4 successes observed in 12 trials with a non uniform beta(3,3) prior
 ## plot the stored prior, likelihood and posterior
-results = binobp(4,12,3,3)
+results = binobp(4, 12, 3, 3)
 
 par(mfrow=c(3,1))
-y.lims = c(0,1.1*max(results$posterior,results$prior))
+yLims = c(0, 1.1 * max(results$posterior, results$prior))
 
-plot(results$pi,results$prior,ylim=y.lims,type="l"
-	,xlab=expression(pi),ylab="Density",main="Prior")
-polygon(results$pi,results$prior,col="red")
+plot(prior ~ pi, ylim = yLims, type = "l", xlim = c(0, 1),
+	   xlab = expression(pi), ylab = "Density", main = "Prior")
+polygon(results$pi, results$prior, col = "red")
 
-plot(results$pi,results$likelihood,ylim=c(0,0.25),type="l"
-	,xlab=expression(pi),ylab="Density",main="Likelihood")
-polygon(results$pi,results$likelihood,col="green")
+plot(likelihood ~ pi, data = results, ylim = c(0, 0.25), type="l",
+	   xlab = expression(pi), ylab = "Density", main = "Likelihood")
+polygon(results$pi, results$likelihood, col = "green")
 
-plot(results$pi,results$posterior,ylim=y.lims,type="l"
-	,xlab=expression(pi),ylab="Density",main="Posterior")
+plot(posterior ~ pi, data = results, ylim = yLims, type = "l",
+	   xlab=expression(pi), ylab = "Density", main = "Posterior")
 polygon(results$pi,results$posterior,col="blue")
 
 

@@ -1,4 +1,5 @@
-binodp = function(x, n, pi = NULL, pi.prior = NULL, n.pi = 10, plot = TRUE, suppressOutput = FALSE){
+binodp = function(x, n, pi = NULL, pi.prior = NULL, n.pi = 10, 
+                  plot = TRUE, suppressOutput = FALSE){
 
   ## n - the number of trials in the binomial
   ## x - the number of observed successes
@@ -9,24 +10,30 @@ binodp = function(x, n, pi = NULL, pi.prior = NULL, n.pi = 10, plot = TRUE, supp
 
   if(x > n)
     stop("The number of observed successes (x) must be smaller than the number of trials (n)")
-  if(n.pi<3)
+  
+  if(n.pi < 3)
     stop("Number of prior values of pi must be greater than 2")
 
   if(is.null(pi) | is.null(pi.prior)){
     pi = seq(0,1, length = n.pi)
-    pi.prior = rep(1/n.pi,n.pi)
+    pi.prior = rep(1 / n.pi, n.pi)
   }
 
   if(any(pi < 0) | any(pi > 1))   ## check that probabilities lie on [0,1]
     stop("Values of pi must be between 0 and 1 inclusive")
 
-  if(any(pi.prior<0)|any(pi.prior>1))
+  if(any(pi.prior < 0) | any(pi.prior > 1))
     stop("Prior probabilities must be between 0 and 1 inclusive")
 
-  if(round(sum(pi.prior),7)!=1){
+  if(round(sum(pi.prior), 7) != 1){
     warning("The prior probabilities did not sum to 1, therefore the prior has been normalized")
-    pi.prior = pi.prior/sum(pi.prior)
+    pi.prior = pi.prior / sum(pi.prior)
   }
+  
+  ## make sure possible values are in ascending order
+  o = order(pi)
+  pi = pi[o]
+  pi.prior = pi.prior[o]
 
   n.pi = length(pi)
 
@@ -35,9 +42,9 @@ binodp = function(x, n, pi = NULL, pi.prior = NULL, n.pi = 10, plot = TRUE, supp
   posterior = lp / sum(lp)
 
   if(plot){
-    plot(pi,posterior,ylim = c(0, 1.1 * max(posterior, pi.prior)),pch=20
+    plot(pi, posterior,ylim = c(0, 1.1 * max(posterior, pi.prior)),pch=20
        ,col="blue",
-       xlab=expression(pi),ylab=expression(Probabilty(pi)))
+       xlab = expression(pi), ylab = expression(Probabilty(pi)))
     points(pi,pi.prior,pch=20,col="red")
 
     legend("topleft", bty = "n", fill = c("blue", "red"),
@@ -82,9 +89,16 @@ binodp = function(x, n, pi = NULL, pi.prior = NULL, n.pi = 10, plot = TRUE, supp
   
     print(results)
   }
+  
+  mx = sum(pi * posterior)
+  vx = sum((pi  - mx)^2 * posterior)
 
   results = list(name = 'pi', param.x = pi, prior = pi.prior, likelihood = likelihood,
                 posterior = posterior,
+                mean = mx,
+                var = vx, 
+                cdf = function(X, ...){cumDistFun(X, pi, posterior)},
+                quantileFun = function(probs, ...){qFun(probs, pi, posterior)},
                 pi = pi, pi.prior = pi.prior, ## this duplication is for backward compatibility
                 f.cond = f.cond, f.joint = f.joint, f.marg = f.marg)
   class(results) = 'Bolstad'

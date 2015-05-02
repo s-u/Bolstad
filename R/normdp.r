@@ -47,13 +47,20 @@ normdp = function(x, sigma.x = NULL, mu = NULL, mu.prior = NULL, n.mu = 50, plot
   if(plot){
     plot(mu,posterior,ylim=c(0,1.1*max(posterior,mu.prior)),pch = 20, col = "blue",
          xlab=expression(mu),ylab=expression(Probabilty(mu)))
-    points(mu, mu.prior, pch=20,col="red")
+    points(mu, mu.prior, pch = 20, col = "red")
   
-    left = min(mu)+diff(range(mu))*0.05
-    legend(left,max(posterior,mu.prior),pch=20, col = c("blue","red"),legend=c("Posterior","Prior"))
+    legend("topleft", bty = "n", fill = c("blue", "red"),
+           legend = c("Posterior","Prior"), cex = 0.7)
   }
+  mx = sum(mu * posterior)
+  vx = sum((mu - mx)^2 * posterior)
   
-  results = list(name = 'mu', param.x = mu.prior, prior = mu.prior, likelihood = likelihood, posterior = posterior)
+  results = list(name = 'mu', param.x = mu.prior, 
+                 prior = mu.prior, 
+                 likelihood = likelihood, posterior = posterior,
+                 mean = mx, var = vx,
+                 cdf = function(x, ...)cumDistFun(x, mu, posterior),
+                 quantileFun = function(probs, ...)qFun(probs, mu, posterior))
   class(results) = 'Bolstad'
   
   invisible(results)

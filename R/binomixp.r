@@ -86,21 +86,25 @@ binomixp = function(x, n, alpha0 = c(1,1), alpha1 = c(1,1), p = 0.5, plot = TRUE
          ,type="l",lty=2,col="black")
     lines(pi,posterior.1,lty=3,col="red")
     lines(pi,posterior,lty=1,col="green")
-    legend(0,y.max,legend=c(expression(posterior[0]),expression(posterior[1])
-                     ,expression(posterior[mix])),lty=c(2,3,1),col=c("black","red","green"))
+    legend("topleft", bty = "n",
+           legend=c(expression(posterior[0]),expression(posterior[1])
+                     ,expression(posterior[mix])),
+           lty = c(2, 3, 1), col=c("black", "red", "green"))
   
     ##plot the mixture posterior likelihood and mixture posterior
   
     y.max = max(prior,posterior,likelihood)
   
     plot(pi,prior,ylim=c(0,y.max*1.1),
-         xlab=expression(pi),ylab="Density"
-         ,main="Mixture prior, likelihood and mixture posterior"
-         ,type="l",lty=2,col="black")
+         xlab = expression(pi),ylab="Density"
+         ,main = "Mixture prior, likelihood and mixture posterior"
+         ,type = "l",lty=2,col="black")
     lines(pi,likelihood,lty=3,col="red")
     lines(pi,posterior,lty=1,col="green")
-    legend(0,y.max,legend=c(expression(prior[mix]),expression(likelihood)
-                     ,expression(posterior[mix])),lty=c(2,3,1),col=c("black","red","green"))
+    legend("topleft", bty = "n",
+           legend=c(expression(prior[mix]),expression(likelihood)
+                    ,expression(posterior[mix])),
+           lty=c(2,3,1), col = c("black", "red", "green"))
   
     par(o.par)
   }

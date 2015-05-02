@@ -42,26 +42,26 @@ binodp(x,n, pi = NULL, pi.prior = NULL, n.pi = 10, plot = TRUE, suppressOutput =
 binodp(6,8)
 
 ## same as previous example but with more possibilities for pi
-binodp(6,8,n.pi=100)
+binodp(6, 8, n.pi = 100)
 
 ## 6 successes, 8 trials and a non-uniform discrete prior
-pi = seq(0,1,by=0.01)
+pi = seq(0, 1, by = 0.01)
 pi.prior = runif(101)
-pi.prior = sort(pi.prior/sum(pi.prior))
-binodp(6,8,pi,pi.prior)
+pi.prior = sort(pi.prior / sum(pi.prior))
+binodp(6, 8, pi, pi.prior)
 
 ## 5 successes, 6 trials, non-uniform prior
-pi = c(0.3,0.4,0.5)
-pi.prior = c(0.2,0.3,0.5)
-results = binodp(5,6,pi,pi.prior)
+pi = c(0.3, 0.4, 0.5)
+pi.prior = c(0.2, 0.3, 0.5)
+results = binodp(5, 6, pi, pi.prior)
 
 ## plot the results from the previous example using a side-by-side barplot
 results.matrix = rbind(results$pi.prior,results$posterior)
 colnames(results.matrix) = pi
-barplot(results.matrix,col=c("red","blue"),beside=TRUE
-	,xlab=expression(pi),ylab=expression(Probability(pin)))
+barplot(results.matrix, col = c("red", "blue"), beside = TRUE,
+	      xlab = expression(pi), ylab=expression(Probability(pi)))
 box()
-legend(1,0.65,legend=c("Prior","Posterior"),fill=c("red","blue"))
+legend(1, 0.65, legend = c("Prior", "Posterior"), fill = c("red", "blue"))
 }
 \keyword{misc}
 

@@ -112,8 +112,10 @@ normmixp = function(x, sigma.x, prior0, prior1, p = 0.5, n.mu = 100, plot = TRUE
          ,type="l",lty=2,col="black")
     lines(mu,prior.1,lty=3,col="red")
     lines(mu,prior,lty=1,col="blue")
-    legend(k1,y.max,legend=c(expression(prior[0]),expression(prior[1])
-                      ,expression(prior[mix])),lty=c(2,3,1),col=c("black","red","blue"))
+    legend("topleft", bty = "n", cex = 0.7,
+           legend = c(expression(prior[0]),expression(prior[1])
+                      ,expression(prior[mix])),
+           lty = c(2,3,1), col = c("black", "red", "blue"))
   
     ##plot the posteriors and the mixture posterior
   
@@ -125,8 +127,10 @@ normmixp = function(x, sigma.x, prior0, prior1, p = 0.5, n.mu = 100, plot = TRUE
          ,type="l",lty=2,col="black")
     lines(mu,posterior.1,lty=3,col="red")
     lines(mu,posterior,lty=1,col="blue")
-    legend(k1,y.max,legend=c(expression(posterior[0]),expression(posterior[1])
-                      ,expression(posterior[mix])),lty=c(2,3,1),col=c("black","red","blue"))
+    legend("topleft", bty = "n", cex = 0.7, 
+           legend = c(expression(posterior[0]),expression(posterior[1])
+                      ,expression(posterior[mix])),
+           lty = c(2,3,1), col = c("black","red","blue"))
     ##plot the mixture posterior likelihood and mixture posterior
   
     y.max = max(prior,posterior,likelihood)
@@ -137,12 +141,19 @@ normmixp = function(x, sigma.x, prior0, prior1, p = 0.5, n.mu = 100, plot = TRUE
          ,type="l",lty=2,col="black")
     lines(mu,likelihood,lty=3,col="red")
     lines(mu,posterior,lty=1,col="blue")
-    legend(k1,y.max,legend=c(expression(prior[mix]),expression(likelihood)
-                      ,expression(posterior[mix])),lty=c(2,3,1),col=c("black","red","blue"))
+    legend("topleft", bty = "n", cex = 0.7,
+           legend = c(expression(prior[mix]),expression(likelihood)
+                      ,expression(posterior[mix])),
+           lty = c(2, 3, 1), col = c("black", "red", "blue"))
   
     par(o.par)
   }
-  invisible(list(mu = mu,prior = prior, likelihood = likelihood, posterior = posterior))
+  results = list(name = 'mu', param.x = mu, 
+                 prior = prior, likelihood = likelihood, posterior = posterior,
+                 mu = mu ## for backwards compatibility only)
+  )
+  class(results) = "Bolstad"
+  invisible(results)
 }
 
 

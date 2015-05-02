@@ -1,4 +1,5 @@
-poisgamp = function(y, r, v, plot = TRUE, suppressOutput = FALSE){
+poisgamp = function(y, shape, rate = 1, scale = 1 / rate,
+                    plot = TRUE, suppressOutput = FALSE){
   n = length(y)
   y.sum = sum(y)
 
@@ -8,8 +9,15 @@ poisgamp = function(y, r, v, plot = TRUE, suppressOutput = FALSE){
   if(any(y < 0))
     stop("Error: y contains negative values")
 
-  if(r<0 || v<0)
-    stop("Shape parameter r and rate parameter v must be greater than or equal to zero")
+  if(scale !=1 & rate == 1){
+    rate = 1 / scale
+  }
+  
+  r = shape
+  v = rate
+  
+  if(r < 0 || v < 0)
+    stop("Shape parameter and rate parameter must be greater than or equal to zero")
 
   if(!suppressOutput){
     cat("Summary statistics for data\n")
@@ -22,10 +30,10 @@ poisgamp = function(y, r, v, plot = TRUE, suppressOutput = FALSE){
     v.inv = 1/v
     k1 = qgamma(0.9999,r,v)
     k2 = k1/1000
-    mu = seq(0,k1, by = k2)
-    r1 = r+y.sum
-    v1 = v+n
-    v1.inv = 1/v1
+    mu = seq(0, k1, by = k2)
+    r1 = r + y.sum
+    v1 = v + n
+    v1.inv = 1 / v1
 
     prior = dgamma(mu,r, v)
     likelihood = matrix(0, ncol = length(mu), nrow = length(y))
@@ -35,7 +43,7 @@ poisgamp = function(y, r, v, plot = TRUE, suppressOutput = FALSE){
     likelihood = apply(likelihood, 2, prod)
     posterior = dgamma(mu, r1, v1)
 
-    k3 = qgamma(c(0.005,0.995),r1,v1)
+    k3 = qgamma(c(0.005,0.995), r1, v1)
 
     if(!suppressOutput){
       cat("Summary statistics for posterior\n")
@@ -49,10 +57,11 @@ poisgamp = function(y, r, v, plot = TRUE, suppressOutput = FALSE){
       y.max = max(prior,posterior)
       plot(mu,prior,ylim = c(0,1.1*y.max),xlab = expression(mu)
            ,ylab = "Density",
-           ,main = "Shape of gamma prior and posterior for Poisson mean"
+           ,main = "Shape of gamma prior and posterior\n for Poisson mean"
            ,type = "l",lty = 2,col = "red")
       lines(mu,posterior,lty = 3,col = "blue")
-      legend(mu[1],y.max,lty = 2:3,col = c("red","blue"),legend = c("Prior","Posterior"))
+      legend("topleft", bty = "n", lty = 2:3, col = c("red","blue"),
+             legend = c("Prior","Posterior"), cex = 0.7)
     }
   }else if(v == 0){
     r1 = r+y.sum
@@ -88,18 +97,24 @@ poisgamp = function(y, r, v, plot = TRUE, suppressOutput = FALSE){
       y.max = max(prior,posterior)
       plot(mu,prior,ylim = c(0,1.1*y.max),xlab = expression(mu)
            ,ylab = "Density",
-           ,main = "Shape of gamma prior and posterior for Poisson mean"
+           ,main = "Shape of gamma prior and posterior\n for Poisson mean"
            ,type = "l",lty = 2,col = "red")
       lines(mu,posterior,lty = 3,col = "blue")
-      legend(mu[1],y.max,lty = 2:3,col = c("red","blue"),legend = c("Prior","Posterior"))
+      legend("topleft", bty = "n", cex = 0.7,
+             lty = 2:3, col = c("red", "blue"), legend = c("Prior","Posterior"))
     }
   }else{
-    stop("Error: v must be greater or equal to zero")
+    stop("Error: rate must be greater or equal to zero")
   }
 
-  results = list(name = 'mu', param.x = mu, prior = prior, likelihood = likelihood, posterior = posterior,
+  results = list(name = 'mu', param.x = mu, prior = prior, 
+                 likelihood = likelihood, posterior = posterior,
+                 mean = r1 / v1, 
+                 var = r1 / v1^2,
+                 cdf = function(m, ...){pgamma(m, shape = r1, rate = v1, ...)},
+                 quantileFun = function(probs, ...){qgamma(probs, shape = r1, rate = v1, ...)},
                  mu = mu, # for backwards compatibility only
-                 r = r1,v = v1)
+                 shape = r1, rate = v1)
   
   class(results) = 'Bolstad'
   invisible(results)

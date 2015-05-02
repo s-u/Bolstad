@@ -11,10 +11,10 @@ normnp = function(x, m.x = 0 , s.x = 1, sigma.x = NULL, n.mu = 100, plot = TRUE)
   n.x = length(x)
 
   if(is.null(sigma.x)){
-    sigma.x = sd(x-mean.x)
+    sigma.x = sd(x - mean.x)
     cat(paste("Standard deviation of the residuals :",signif(sigma.x,4),"\n",sep=""))
   }else{
-    if(sigma.x>0){
+    if(sigma.x > 0){
       cat(paste("Known standard deviation :",signif(sigma.x,4),"\n",sep=""))
     }else{
       stop("Standard deviation sigma.x must be greate than zero")
@@ -34,8 +34,8 @@ normnp = function(x, m.x = 0 , s.x = 1, sigma.x = NULL, n.mu = 100, plot = TRUE)
     mu = seq(lb,ub,length=n.mu)
     mu.prior = rep(1/(ub-lb),n.mu)
   }else{
-    lb = m.x-3.5*s.x
-    ub = m.x+3.5*s.x
+    lb = m.x - 3.5*s.x
+    ub = m.x + 3.5*s.x
     mu = seq(lb,ub,length=n.mu)
     mu.prior = dnorm(mu,m.x,s.x)
     prior.precision = 1/s.x^2
@@ -61,7 +61,8 @@ normnp = function(x, m.x = 0 , s.x = 1, sigma.x = NULL, n.mu = 100, plot = TRUE)
     lines(mu,mu.prior,lty=2,col="red")
   
     left = min(mu)+diff(range(mu))*0.05
-    legend(left,max(posterior,mu.prior),lty=1:2,col=c("blue","red"),legend=c("Posterior","Prior"))
+    legend("topleft",bty = "n", lty = 1:2, col = c("blue", "red"),
+           legend = c("Posterior", "Prior"), cex = 0.7)
   }
   probs = c(0.005,0.01,0.025,0.05,0.5,0.95,0.975,0.99,0.995)
   qtls = qnorm(probs,post.mean,post.sd)
@@ -73,7 +74,11 @@ normnp = function(x, m.x = 0 , s.x = 1, sigma.x = NULL, n.mu = 100, plot = TRUE)
     cat(paste(round(probs[i],3),"\t",round(qtls[i],7),"\n",sep=""))
   
   results = list(name = 'mu', param.x = mu, prior = mu.prior, likelihood = likelihood, posterior = posterior,
-                 mean = post.mean, sd = post.sd, quantiles = qtls)
+                 mean = post.mean, 
+                 var = post.sd^2, 
+                 sd = post.sd, quantiles = qtls,
+                 cdf = function(x, ...)pnorm(x, post.mean, post.sd, ...),
+                 quantileFun = function(probs, ...)qnorm(probs, post.mean, post.sd, ...))
   class(results) = 'Bolstad'
   
   invisible(results)

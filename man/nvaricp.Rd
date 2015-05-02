@@ -59,6 +59,15 @@ ub = Finv(0.975)
 cat(paste("95\% credible interval for sigma: [",
               signif(lb,4),", ", signif(ub,4),"]\n",sep=""))
 
+##  Same as the previous example but a calculate a 95\% credible
+## interval for sigma by hand using the new quantile function
+results = nvaricp(y, 200, 29.11, 1)
+ci = quantile(results, c(0.025, 0.975))
+lb = ci[1]
+ub = ci[2]
+cat(paste("95\% credible interval for sigma: [",
+              signif(lb,4),", ", signif(ub,4),"]\n",sep=""))
+
 }
 \keyword{misc}
 
