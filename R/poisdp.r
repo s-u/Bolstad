@@ -101,8 +101,9 @@ poisdp = function(y.obs, mu, mu.prior, plot = TRUE){
                          ,main=expression(
                              paste("Prior and posterior probability for ", mu
                                    ," given the data y")))
-      legend(midpoints[1,1],y.max,legend=c("Prior","Posterior")
-             ,fill=c("red","blue"))
+      legend("topleft", cex = 0.7, bty = "n", 
+             legend=c("Prior","Posterior"),
+             fill=c("red","blue"))
       box()
     }else{
       y.max = max(mu.prior,posterior)
@@ -113,7 +114,8 @@ poisdp = function(y.obs, mu, mu.prior, plot = TRUE){
            ,main=expression(paste("Prior and posterior probability for ", mu
                ," given the data y")))
       lines(mu,posterior,lty=1,col="blue")
-      legend(mu[2],y.max,lty=c(2,1),col=c("red","blue"),
+      legend("topleft", cex = 0.7, bty = "n", 
+             lty = c(2,1), col = c("red"," blue"),
              legend=c("Prior","Posterior"))
   
     }

@@ -46,23 +46,7 @@ binobp(6,8,0.5,6)
 ## 4 successes observed in 12 trials with a non uniform beta(3,3) prior
 ## plot the stored prior, likelihood and posterior
 results = binobp(4, 12, 3, 3)
-
-par(mfrow=c(3,1))
-yLims = c(0, 1.1 * max(results$posterior, results$prior))
-
-plot(prior ~ pi, ylim = yLims, type = "l", xlim = c(0, 1),
-	   xlab = expression(pi), ylab = "Density", main = "Prior")
-polygon(results$pi, results$prior, col = "red")
-
-plot(likelihood ~ pi, data = results, ylim = c(0, 0.25), type="l",
-	   xlab = expression(pi), ylab = "Density", main = "Likelihood")
-polygon(results$pi, results$likelihood, col = "green")
-
-plot(posterior ~ pi, data = results, ylim = yLims, type = "l",
-	   xlab=expression(pi), ylab = "Density", main = "Posterior")
-polygon(results$pi,results$posterior,col="blue")
-
-
+decomp(results)
 
 }
 \keyword{misc}

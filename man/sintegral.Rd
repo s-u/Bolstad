@@ -9,7 +9,7 @@
     }.
 }
 \usage{
-	sintegral(x, fx, n.pts = max(256, length(n.x)))
+	sintegral(x, fx, n.pts = max(256, length(x)))
 }
 \arguments{
 	\item{x}{a sequence of \eqn{x} values.}

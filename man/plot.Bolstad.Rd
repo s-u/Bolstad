@@ -5,7 +5,8 @@
 A unified plotting method for plotting the prior, likelihood and posterior from any of the analyses in the book
 }
 \usage{
-\method{plot}{Bolstad}(x, overlay = TRUE, which = c(1,3), densCols = c("red","green","blue")[which],  \dots)
+\method{plot}{Bolstad}(x, overlay = TRUE, which = c(1,3), 
+                       densCols = c("red","green","blue")[which],  \dots)
 }
 \arguments{
   \item{x}{A S3 object of class Bolstad}

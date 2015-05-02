@@ -75,7 +75,7 @@ bayes.lin.reg(y,x,"n","n",0,3,30,10)
 
 ## use the same data but plot it and the credible interval
 
-bayes.lin.reg(y,x,"n","n",0,3,30,10,plot.data = TRUE)
+bayes.lin.reg(y,x,"n","n",0,3,30,10, plot.data = TRUE)
 
 ## The heart rate vs. O2 uptake example 14.1
 O2 = c(0.47,0.75,0.83,0.98,1.18,1.29,1.40,1.60,1.75,1.90,2.23)

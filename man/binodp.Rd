@@ -61,7 +61,8 @@ colnames(results.matrix) = pi
 barplot(results.matrix, col = c("red", "blue"), beside = TRUE,
 	      xlab = expression(pi), ylab=expression(Probability(pi)))
 box()
-legend(1, 0.65, legend = c("Prior", "Posterior"), fill = c("red", "blue"))
+legend("topleft", bty = "n", cex = 0.7, 
+       legend = c("Prior", "Posterior"), fill = c("red", "blue"))
 }
 \keyword{misc}
 

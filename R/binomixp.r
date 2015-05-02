@@ -69,11 +69,12 @@ binomixp = function(x, n, alpha0 = c(1,1), alpha1 = c(1,1), p = 0.5, plot = TRUE
   
     plot(pi,prior.0,ylim=c(0,y.max*1.1),
          xlab=expression(pi),ylab="Density"
-         ,main="Mixture prior and it's components"
+         ,main="Mixture prior and its components"
          ,type="l",lty=2,col="black")
     lines(pi,prior.1,lty=3,col="red")
     lines(pi,prior,lty=1,col="green")
-    legend(0,y.max,legend=c(expression(prior[0]),expression(prior[1])
+    legend("topleft", cex = 0.7, bty = "n", 
+           legend=c(expression(prior[0]),expression(prior[1])
                      ,expression(prior[mix])),lty=c(2,3,1),col=c("black","red","green"))
   
     ##plot the posteriors and the mixture posterior
@@ -82,7 +83,7 @@ binomixp = function(x, n, alpha0 = c(1,1), alpha1 = c(1,1), p = 0.5, plot = TRUE
   
     plot(pi,posterior.0,ylim=c(0,y.max*1.1),
          xlab=expression(pi),ylab="Density"
-         ,main="Mixture posterior and it's components"
+         ,main="Mixture posterior and its components"
          ,type="l",lty=2,col="black")
     lines(pi,posterior.1,lty=3,col="red")
     lines(pi,posterior,lty=1,col="green")
@@ -109,7 +110,8 @@ binomixp = function(x, n, alpha0 = c(1,1), alpha1 = c(1,1), p = 0.5, plot = TRUE
     par(o.par)
   }
   
-  results = list(name = 'p', param.x = pi ,prior = prior, likelihood = likelihood, posterior = posterior,
+  results = list(name = 'p', param.x = pi ,prior = prior,
+                 likelihood = likelihood, posterior = posterior,
                  pi = pi #for backwards compat. only
                  )
   class(results) = 'Bolstad'

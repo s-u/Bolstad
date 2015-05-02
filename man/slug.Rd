@@ -17,9 +17,6 @@ Lengths and weights of 100 slugs from the species Limax maximus collected around
     \item{\code{log.wt}}{natural logarithm of the \code{weight}}
   }
 }
-\source{
-%%  ~~ reference to a publication or URL from which the data were obtained ~~
-}
 \references{
 Barker, G. and McGhie, R. (1984). The Biology of Introduced Slugs (Pulmonata) in New Zealand: Introduction and Notes on Limax Maximus, NZ Entomologist 8, 106--111.
 }

@@ -136,11 +136,15 @@ xdesign = function(x = NULL, y = NULL, corr = 0.8, size = 20,
     y.lims = max(abs(c(rng[1]-0.1*diff(rng),rng[2]+0.1*diff(rng))))
     y.lims = c(-y.lims,y.lims)
 
-    boxplot(block.var~ind
-            ,main="Boxplots of Lurking/Blocking variable group means"
-            ,sub="Lurking variable in completely randomized design\nBlocking variable in randomized block design",col=rep(c("blue","red"),rep(n.treatments,2))
-            ,ylim=y.lims)
-    legend(n.treatments+0.5,rng[2],legend=c("Completely randomized design","Randomized block design"),fill=c("blue","red"))
+    boxplot(block.var~ind,
+            main="Boxplots of Lurking/Blocking variable group means",
+            sub="Lurking variable in completely randomized design\nBlocking variable in randomized block design",
+            col=rep(c("blue","red"), rep(n.treatments,2)),
+            ylim = y.lims)
+    legend("topright", bty = "n", cex = 0.7, 
+           legend = c("Completely randomized design",
+                      "Randomized block design"),
+           fill = c("blue","red"))
 
     rng = range(treat.var)
     y.lims = max(abs(c(rng[1]-0.1*diff(rng),rng[2]+0.1*diff(rng))))
@@ -149,7 +153,10 @@ xdesign = function(x = NULL, y = NULL, corr = 0.8, size = 20,
             ,main="Boxplots of treatment group means"
             ,col=rep(c("blue","red"),rep(n.treatments,2))
             ,ylim=y.lims)
-    legend(n.treatments+0.5,rng[2],legend=c("Completely randomized design","Randomized block design"),fill=c("blue","red"))
+    legend("topright", cex = 0.7, bty = "n",
+           legend=c("Completely randomized design",
+                    "Randomized block design"),
+           fill = c("blue","red"))
 
     x = treat.var[ind<=n.treatments]
     y = treat.var[ind>n.treatments]

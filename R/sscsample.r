@@ -1,6 +1,6 @@
 sscsample  =  function (size, n.samples, sample.type = "simple",
                         x = NULL, strata = NULL,
-                        cluster = NULL, print = NULL){
+                        cluster = NULL){
     ## Written initially by:
     ## James M. Curran,
     ## Dept. of Statistics, University of Auckland
@@ -137,11 +137,7 @@ sscsample  =  function (size, n.samples, sample.type = "simple",
             s.strata[r, j]  =  sum(strata[idx] == strata.names[j])
         sample.out[, r]  =  x[idx]
      }
-    
-    if(!is.null(print)){
-      cat("This argument is deprecated and now ignored\n")
-    }
-    
+        
     results = list(samples = samples, s.strata = s.strata, means = means)
     class(results) = "sscsamp"
     

@@ -1,14 +1,9 @@
-sintegral = function(x, fx, n.pts = max(256, length(x)), warn = FALSE){
+sintegral = function(x, fx, n.pts = max(256, length(x))){
   ## numerically integrates fx over x using Simpsons rule
   ## x - a sequence of x values
   ## fx - the value of the function to be integrated at x
   ##    - or a function
   ## n.pts - the number of points to be used in the integration
-  ## ret - if true returns the partial sums of the integration
-  ## note this argument is deprecated and ignored
-  
-  if(warn)
-    message("Note: sintegral's behavior has changed.\nTo get the value of the integral use sintegral(x,fx)$value.\nTo get the cdf use sintegral(x,fx)$cdf")
   
   if(class(fx) == "function")
     fx = fx(x)

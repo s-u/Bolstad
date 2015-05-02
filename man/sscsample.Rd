@@ -6,7 +6,7 @@
 }
 \usage{
 sscsample(size, n.samples, sample.type="simple", x = NULL,
-          strata = NULL, cluster = NULL, print = TRUE)
+          strata = NULL, cluster = NULL)
 }
 \arguments{
 	\item{size}{the desired size of the sample}
@@ -16,7 +16,6 @@ sscsample(size, n.samples, sample.type="simple", x = NULL,
 	\item{x}{a vector of measurements for each unit in the population. By default x is not used, and the builtin data set sscsample.data is used}
 	\item{strata}{a corresponding vector for each unit in the population indicating membership to a stratum}
 	\item{cluster}{a corresponding vector for each unit in the population indicating membership to a cluster}
-	\item{print}{this argument is deprecated and ignored.}
       }
 \value{
 	A list will be returned with the following components:
