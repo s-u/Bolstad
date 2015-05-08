@@ -1,3 +1,47 @@
+#' Binomial sampling with a beta prior
+#' 
+#' Evaluates and plots the posterior density for \eqn{\pi}{pi}, the probability
+#' of a success in a Bernoulli trial, with binomial sampling and a continous
+#' \eqn{beta(a,b)} prior.
+#' 
+#' 
+#' @param x the number of observed successes in the binomial experiment.
+#' @param n the number of trials in the binomial experiment.
+#' @param a parameter for the beta prior - must be greater than zero
+#' @param b parameter for the beta prior - must be greater than zero
+#' @param pi A rannge of values for the prior to be calculated over.
+#' @param plot if \code{TRUE} then a plot showing the prior and the posterior
+#' will be produced.
+#' @return An object of class 'Bolstad' is returned. This is a list with the
+#' following components: \item{prior}{the prior density of \eqn{\pi}{pi}, i.e.
+#' the \eqn{beta(a,b)} density} \item{likelihood}{the likelihood of \eqn{x}
+#' given \eqn{\pi}{pi} and \eqn{n}, i.e. the
+#' \eqn{binomial(n,\pi)}{binomial(n,pi)} density} \item{posterior}{the
+#' posterior density of \eqn{\pi}{pi} given \eqn{x} and \eqn{n} - i.e. the
+#' \eqn{beta(a+x,b+n-x)} density} \item{pi}{the values of \eqn{\pi}{pi} for
+#' which the posterior density was evaluated} \item{mean}{the posterior mean}
+#' \item{var}{the posterior variance} \item{sd}{the posterior std. deviation}
+#' \item{quantiles}{a set of quantiles from the posterior} \item{cdf}{a
+#' cumulative distribution function for the posterior} \item{quantileFun}{a
+#' quantile function for the posterior}
+#' @seealso \code{\link{binodp}} \code{\link{binogcp}}
+#' @keywords misc
+#' @examples
+#' 
+#' ## simplest call with 6 successes observed in 8 trials and a beta(1,1) uniform
+#' ## prior
+#' binobp(6,8)
+#' 
+#' ## 6 successes observed in 8 trials and a non-uniform beta(0.5,6) prior
+#' binobp(6,8,0.5,6)
+#' 
+#' ## 4 successes observed in 12 trials with a non uniform beta(3,3) prior
+#' ## plot the stored prior, likelihood and posterior
+#' results = binobp(4, 12, 3, 3)
+#' decomp(results)
+#' 
+#' 
+#' @export binobp
 binobp = function(x, n, a = 1, b = 1, pi = seq(0.01, 0.999, by = 0.001), plot = TRUE){
   
   ## n - the number of trials in the binomial

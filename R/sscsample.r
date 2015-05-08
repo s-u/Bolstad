@@ -1,3 +1,43 @@
+#' Simple, Stratified and Cluster Sampling
+#' 
+#' Samples from a fixed population using either simple random sampling,
+#' stratitified sampling or cluster sampling.
+#' 
+#' 
+#' @param size the desired size of the sample
+#' @param n.samples the number of repeat samples to take
+#' @param sample.type the sampling method. Can be one of "simple",
+#' "stratified", "cluser" or 1, 2, 3 where 1 corresponds to "simple", 2 to
+#' "stratified" and 3 to "cluster"
+#' @param x a vector of measurements for each unit in the population. By
+#' default x is not used, and the builtin data set sscsample.data is used
+#' @param strata a corresponding vector for each unit in the population
+#' indicating membership to a stratum
+#' @param cluster a corresponding vector for each unit in the population
+#' indicating membership to a cluster
+#' @return A list will be returned with the following components:
+#' \item{samples}{a matrix with the number of rows equal to size and the number
+#' of columns equal to n.samples. Each column corresponds to a sample drawn
+#' from the population} \item{s.strata}{a matrix showing how many units from
+#' each stratum were included in the sample} \item{means}{a vector containing
+#' the mean of each sample drawn}
+#' @author James M. Curran, Dept. of Statistics, University of Auckland. Janko
+#' Dietzsch, Proteomics Algorithm and Simulation,Zentrum f. Bioinformatik
+#' Tuebingen Fakultaet f. Informations- und Kognitionswissenschaften,
+#' Universitaet Tuebingen
+#' @keywords misc
+#' @examples
+#' 
+#' ## Draw 200 samples of size 20 using simple random sampling
+#' sscsample(20,200)
+#' 
+#' ## Draw 200 samples of size 20 using simple random sampling and store the
+#' ## results. Extract the means of all 200 samples, and the 50th sample
+#' res = sscsample(20,200)
+#' res$means
+#' res$samples[,50]
+#' 
+#' @export sscsample
 sscsample  =  function (size, n.samples, sample.type = "simple",
                         x = NULL, strata = NULL,
                         cluster = NULL){

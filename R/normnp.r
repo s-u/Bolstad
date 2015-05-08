@@ -1,11 +1,49 @@
+#' Bayesian inference on a normal mean with a normal prior
+#' 
+#' Evaluates and plots the posterior density for \eqn{\mu}{mu}, the mean of a
+#' normal distribution, with a normal prior on \eqn{\mu}{mu}
+#' 
+#' 
+#' @param x a vector of observations from a normal distribution with unknown
+#' mean and known std. deviation.
+#' @param m.x the mean of the normal prior
+#' @param s.x the standard deviation of the normal prior
+#' @param sigma.x the population std. deviation of the normal distribution. If
+#' this value is NULL, which is is by default, then a flat prior is used and
+#' m.x and s.x are ignored
+#' @param n.mu the number of possible \eqn{\mu}{mu} values in the prior
+#' @param plot if \code{TRUE} then a plot showing the prior and the posterior
+#' will be produced.
+#' @return A list will be returned with the following components: \item{mu}{the
+#' vector of possible \eqn{\mu}{mu} values used in the prior}
+#' \item{mu.prior}{the associated probability mass for the values in
+#' \eqn{\mu}{mu}} \item{likelihood}{the scaled likelihood function for
+#' \eqn{\mu}{mu} given \eqn{x} and \eqn{\sigma_x}{sigma.x}}
+#' \item{posterior}{the posterior probability of \eqn{\mu}{mu} given \eqn{x}
+#' and \eqn{\sigma_x}{sigma.x}} \item{mean}{the posterior mean} \item{sd}{the
+#' posterior standard deviation} \item{qtls}{a selection of quantiles from the
+#' posterior density}
+#' @seealso \code{\link{normdp}} \code{\link{normgcp}}
+#' @keywords misc
+#' @examples
+#' 
+#' ## generate a sample of 20 observations from a N(-0.5,1) population
+#' x = rnorm(20,-0.5,1)
+#' 
+#' ## find the posterior density with a N(0,1) prior on mu
+#' normnp(x,sigma=1)
+#' 
+#' ## find the posterior density with N(0.5,3) prior on mu
+#' normnp(x,0.5,3,1)
+#' 
+#' ## Find the posterior density for mu, given a random sample of 4
+#' ## observations from N(mu,sigma^2=1), y = [2.99, 5.56, 2.83, 3.47],
+#' ## and a N(3,sd=2)$ prior for mu
+#' y = c(2.99,5.56,2.83,3.47)
+#' normnp(y,3,2,1)
+#' 
+#' @export normnp
 normnp = function(x, m.x = 0 , s.x = 1, sigma.x = NULL, n.mu = 100, plot = TRUE){
-
-  ## x - the vector of observations
-  ## m.x - the mean of the normal prior
-  ## s.x - the standard deviation of the normal prior
-  ## sigma.x - the population standard deviation
-  ## the prior, likelihood, posterior, mean, variance, and
-  ## quantiles are returned as a list
 
   mean.x = mean(x)
   n.x = length(x)
