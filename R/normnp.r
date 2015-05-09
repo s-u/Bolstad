@@ -43,7 +43,8 @@
 #' normnp(y,3,2,1)
 #' 
 #' @export normnp
-normnp = function(x, m.x = 0 , s.x = 1, sigma.x = NULL, n.mu = 100, plot = TRUE){
+normnp = function(x, m.x = 0 , s.x = 1, sigma.x = NULL, mu = NULL, n.mu = max(100, length(mu)), 
+                  plot = TRUE){
 
   mean.x = mean(x)
   n.x = length(x)
@@ -59,23 +60,29 @@ normnp = function(x, m.x = 0 , s.x = 1, sigma.x = NULL, n.mu = 100, plot = TRUE)
     }
   }
 
-  if(n.mu < 100){
-      warning("Number of prior values of mu must be greater than 100")
-      n.mu = 100
+  if(is.null(mu)){
+    lb = ub = 0
+    if(s.x <= 0){
+      lb = mean.x - 3.5 * sigma.x / sqrt(n.x)
+      ub = mean.x + 3.5 * sigma.x / sqrt(n.x)
+    }else{
+      lb = m.x - 3.5 * s.x
+      ub = m.x + 3.5 * s.x
     }
-
+    mu = seq(lb, ub, length = n.mu)
+  }else{
+    if(length(mu) < n.mu)
+      mu = seq(min(mu), max(mu), length = n.mu)
+  }
+  
   if(s.x <= 0){
-    lb = mean.x-3.5*sigma.x/sqrt(n.x)
-    ub = mean.x+3.5*sigma.x/sqrt(n.x)
     prior.precision = 0
     m.x = 0
-    mu = seq(lb,ub,length=n.mu)
-    mu.prior = rep(1/(ub-lb),n.mu)
+    lb = min(mu)
+    ub = max(mu)  
+    mu.prior = rep(1 / (ub - lb), n.mu)
   }else{
-    lb = m.x - 3.5*s.x
-    ub = m.x + 3.5*s.x
-    mu = seq(lb,ub,length=n.mu)
-    mu.prior = dnorm(mu,m.x,s.x)
+    mu.prior = dnorm(mu, m.x, s.x)
     prior.precision = 1/s.x^2
   }
 

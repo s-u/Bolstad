@@ -4,7 +4,8 @@
 \alias{normmixp}
 \title{Bayesian inference on a normal mean with a mixture of normal priors}
 \usage{
-normmixp(x, sigma.x, prior0, prior1, p = 0.5, n.mu = 100, plot = TRUE)
+normmixp(x, sigma.x, prior0, prior1, p = 0.5, mu = NULL, n.mu = max(100,
+  length(mu)), plot = TRUE)
 }
 \arguments{
 \item{x}{a vector of observations from a normal distribution with unknown
@@ -38,22 +39,22 @@ Evaluates and plots the posterior density for \eqn{\mu}{mu}, the mean of a
 normal distribution, with a mixture of normal priors on \eqn{\mu}{mu}
 }
 \examples{
-## generate a sample of 20 observations from a N(-0.5,1) population
-x = rnorm(20,-0.5,1)
+## generate a sample of 20 observations from a N(-0.5, 1) population
+x = rnorm(20, -0.5, 1)
 
-## find the posterior density with a N(0,1) prior on mu - a 50:50 mix of
-## two N(0,1) densities
-normmixp(x,1,c(0,1),c(0,1))
+## find the posterior density with a N(0, 1) prior on mu - a 50:50 mix of
+## two N(0, 1) densities
+normmixp(x, 1, c(0, 1), c(0, 1))
 
-## find the posterior density with 50:50 mix of a N(0.5,3) prior and a
-## N(0,1) prior on mu
-normmixp(x,1,c(0.5,3),c(0,1))
+## find the posterior density with 50:50 mix of a N(0.5, 3) prior and a
+## N(0, 1) prior on mu
+normmixp(x, 1, c(0.5, 3), c(0, 1))
 
 ## Find the posterior density for mu, given a random sample of 4
-## observations from N(mu,1), y = [2.99, 5.56, 2.83, 3.47],
-## and a 80:20 mix of a N(3,2) prior and a N(0,100) prior for mu
-x = c(2.99,5.56,2.83,3.47)
-normmixp(x,1,c(3,2),c(0,100),0.8)
+## observations from N(mu, 1), y = [2.99, 5.56, 2.83, 3.47],
+## and a 80:20 mix of a N(3, 2) prior and a N(0, 100) prior for mu
+x = c(2.99, 5.56, 2.83, 3.47)
+normmixp(x, 1, c(3, 2), c(0, 100), 0.8)
 }
 \seealso{
 \code{\link{binomixp}} \code{\link{normdp}} \code{\link{normgcp}}

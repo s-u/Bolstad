@@ -98,34 +98,34 @@ binomixp = function(x, n, alpha0 = c(1,1), alpha1 = c(1,1), p = 0.5, plot = TRUE
 
   q0 = p
   q1 = 1 - q0
-  qp0 = q0*f0/(q0*f0+q1*f1)
+  qp0 = q0 * f0 / (q0 * f0 + q1 * f1)
   qp1 = 1-qp0
 
-  cat(paste("Post. mixing proportion for component 0:\t",signif(qp0,3),"\n"))
-  cat(paste("Post. mixing proportion for component 1:\t",signif(qp1,3),"\n"))
+  cat(paste("Post. mixing proportion for component 0:\t",signif(qp0, 3),"\n"))
+  cat(paste("Post. mixing proportion for component 1:\t",signif(qp1, 3),"\n"))
 
-  pi = seq(0.001,0.999,by=0.001)
+  pi = seq(0.001, 0.999, by = 0.001)
 
-  prior.0 = dbeta(pi,alpha0[1],alpha0[2])
-  prior.1 = dbeta(pi,alpha1[1],alpha1[2])
-  prior = q0*prior.0+q1*prior.1
+  prior.0 = dbeta(pi, alpha0[1], alpha0[2])
+  prior.1 = dbeta(pi, alpha1[1], alpha1[2])
+  prior = q0 * prior.0 + q1 * prior.1
 
-  alpha0.post = alpha0+c(x,n-x)
-  alpha1.post = alpha1+c(x,n-x)
+  alpha0.post = alpha0 + c(x, n - x)
+  alpha1.post = alpha1 + c(x, n - x)
 
-  posterior.0 = dbeta(pi,alpha0.post[1],alpha0.post[2])
-  posterior.1 = dbeta(pi,alpha1.post[1],alpha1.post[2])
-  posterior = qp0*posterior.0+qp1*posterior.1
+  posterior.0 = dbeta(pi, alpha0.post[1], alpha0.post[2])
+  posterior.1 = dbeta(pi, alpha1.post[1], alpha1.post[2])
+  posterior = qp0 * posterior.0 + qp1 * posterior.1
 
-  loglik = x*log(pi)+(n-x)*log(1-pi)
-  loglik = loglik-max(loglik)
+  loglik = x * log(pi) + (n - x) * log(1 - pi)
+  loglik = loglik - max(loglik)
   likelihood = exp(loglik)
 
-  normalizing.factor = sum(likelihood)/length(likelihood)
+  normalizing.factor = sum(likelihood) / length(likelihood)
   likelihood = likelihood/normalizing.factor
 
   if(plot){
-    o.par = par(mfrow=c(2,2))
+    o.par = par(mfrow=c(2, 2))
   
     ##plot the priors and the mixture prior
   
@@ -174,12 +174,20 @@ binomixp = function(x, n, alpha0 = c(1,1), alpha1 = c(1,1), p = 0.5, plot = TRUE
     par(o.par)
   }
   
-  results = list(name = 'p', param.x = pi ,prior = prior,
+  results.comp1 = list(name = 'pi', param.x = pi, prior = prior.0,
+                    likelihood = likelihood, posterior = posterior.0)
+  class(results.comp1) = "Bolstad"
+  
+  results.comp2 = list(name = 'pi', param.x = pi, prior = prior.1,
+                    likelihood = likelihood, posterior = posterior.1)
+  class(results.comp2) = "Bolstad"
+  
+  results.mix = list(name = 'pi', param.x = pi ,prior = prior,
                  likelihood = likelihood, posterior = posterior,
                  pi = pi #for backwards compat. only
                  )
-  class(results) = 'Bolstad'
-  invisible(results)
+  class(results.mix) = 'Bolstad'
+  invisible(list(comp1 = results.comp1, comp2 = results.comp2, mix = results.mix))
 }
 
 

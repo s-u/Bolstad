@@ -38,7 +38,9 @@ plot.Bolstad = function(x, overlay = TRUE, which = c(1, 3),
                         scaleLike = FALSE, 
                         xlab = eval(expression(x$name)), 
                         ylab = "", 
-                        main = "Shape of prior and posterior", ...){
+                        main = "Shape of prior and posterior", 
+                        ylim = c(0, max(cbind(x$prior, x$likelihood, x$posterior)[,which]) * 1.1),
+                        cex = 0.7, ...){
   
   which = sort(which)
   
@@ -51,28 +53,35 @@ plot.Bolstad = function(x, overlay = TRUE, which = c(1, 3),
     x$likelihood = x$likelihood * sf
   }
   
+  bLegend = !grepl("none", tolower(legendLoc))
+  
   if(overlay){
     with(x,{
-      Y = cbind(prior, likelihood, posterior)[,which]
-      ylim = c(0, 1.1 * max(Y))
+      Y = as.matrix(cbind(prior, likelihood, posterior)[,which]);
       
       plot(param.x, Y[,1], ylim = ylim, type="l",
            lty = (3:1)[which[1]], col = densCols[1],
            xlab = xlab, ylab = "",
-           main = "Shape of prior and posterior", ...)
+           main = main, ...);
       
-      for(i in 2:ncol(Y)){
-        lines(param.x, Y[,i], lty = (3:1)[which[i]], col = densCols[i])
-      }
+      i = 2;
+      while(i <= ncol(Y)){
+        lines(param.x, Y[,i], lty = (3:1)[which[i]], col = densCols[i]);
+        i = i + 1;
+      };
       
-      legend(legendLoc, lty = (3:1)[which], col = densCols, legend = c("Prior", "Likelihood", "Posterior")[which], bty = 'n')
+      if(bLegend){
+        legend(legendLoc, lty = (3:1)[which], col = densCols, 
+               legend = c("Prior", "Likelihood", "Posterior")[which], 
+               bty = 'n', cex = cex);
+      };
     })
   }else{
     oldpar = par(mfrow = c(1, length(which)), mai = c(0.7, 0.1, 0.2, 0.1), yaxs = 'i', xaxs = 'i')
     
     with(x,{
       Y = cbind(prior, likelihood, posterior)[,which]
-      ylim = c(0, 1.1 * max(Y))
+    
       legend = c("Prior", "Likelihood", "Posterior")[which]
       
       plot(param.x, Y[,1], ylim = ylim, type="l",

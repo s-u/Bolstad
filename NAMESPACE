@@ -3,6 +3,7 @@
 export(IQR)
 export(IQR.Bolstad)
 export(IQR.default)
+export(as.data.frame.Bolstad)
 export(bayes.lin.reg)
 export(binobp)
 export(binodp)
