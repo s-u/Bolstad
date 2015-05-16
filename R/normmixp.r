@@ -81,7 +81,7 @@ normmixp = function(x, sigma.x, prior0, prior1, p = 0.5, mu = NULL, n.mu = max(1
   post.mean1 = (prior.means[2] / (prior.sds[2]^2 * post.prec1)) + (n * x.bar / (sigma.x^2 * post.prec1))
 
   cat("Posterior summary statistics of component 0\n")
-  cat(" -------------------------------------------\n")
+  cat("--------------------------------------------\n")
   cat(paste("Mean:\t\t", signif(post.mean0, 3), "\n"))
   cat(paste("Std. Dev.:\t", signif(post.sd0, 4), "\n"))
   cat(paste("Variance:\t", signif(post.var0, 4), "\n"))
@@ -210,16 +210,22 @@ normmixp = function(x, sigma.x, prior0, prior1, p = 0.5, mu = NULL, n.mu = max(1
     par(o.par)
   }
   comp1 = list(name = 'mu', param.x =  mu, 
-               prior = prior.0, likelihood = likelihood, posterior = posterior.0)
+               prior = prior.0, likelihood = likelihood, posterior = posterior.0,
+               mean  = post.mean0, var = post.var0,
+               cdf = function(q, ...){pnorm(q, mean = post.mean0, sd = post.sd0, ...)},
+               quantileFun = function(probs, ...){qnorm(probs, mean = post.mean0, sd = post.sd0, ...)})
   class(comp1) = "Bolstad"
   
   comp2 = list(name = 'mu', param.x =  mu, 
-               prior = prior.1, likelihood = likelihood, posterior = posterior.1)
+               prior = prior.1, likelihood = likelihood, posterior = posterior.1,
+               mean  = post.mean1, var = post.var1,
+               cdf = function(q, ...){pnorm(q, mean = post.mean1, sd = post.sd1, ...)},
+               quantileFun = function(probs, ...){qnorm(probs, mean = post.mean1, sd = post.sd1, ...)})
   class(comp2) = "Bolstad"
   
   mix = list(name = 'mu', param.x = mu, 
-                 prior = prior, likelihood = likelihood, posterior = posterior,
-                 mu = mu ## for backwards compatibility only)
+             prior = prior, likelihood = likelihood, posterior = posterior,
+             mu = mu ## for backwards compatibility only
   )
   class(mix) = "Bolstad"
   invisible(list(comp1 = comp1, comp2 = comp2, mix = mix))
