@@ -49,7 +49,7 @@ plot.Bolstad = function(x, overlay = TRUE, which = c(1, 3),
   }
   
   if(scaleLike){
-    sf = round(max(x$posterior) / max(x$likelihood))
+    sf = max(x$posterior) / max(x$likelihood)
     x$likelihood = x$likelihood * sf
   }
   
