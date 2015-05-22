@@ -78,7 +78,7 @@ bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less"
       
       param.x = seq(mx - 4 * sqrt(vx), mx + 4 * sqrt(vx), length = 200)
       prior = 1 / diff(range(x))
-      likelihood = dnorm(mx, mu = param.x, se.post)
+      likelihood = dnorm(mx, param.x, se.post)
       std.x = (param.x - mpost) / se.post
       posterior = dt(std.x, df = df)
     }else{
@@ -116,6 +116,8 @@ bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less"
     
     if (var.equal && nx + ny < 3) 
       stop("not enough observations")
+    
+    name = 'mu[d]'
     
     my = mean(y)
     vy = var(y)
@@ -157,11 +159,12 @@ bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less"
     }
   }
   
-  result = list(name = mu, param.x = param.x, 
+  result = list(name = name, param.x = param.x, 
                 prior = prior, likelihood = likelihood, posterior = posterior,
                 mean = mpost,
                 var = se.post^2,
-                cdf = function(x)dt((x - mpost) / se.post, df = df))
+                cdf = function(x)pt((x - mpost) / se.post, df = df),
+                quantileFun = function(probs, ...){se.post * qt(probs, df = df, ...) + mpost})
   class(result) = 'Bolstad'
   
   tstat = (mpost - mu) / se.post

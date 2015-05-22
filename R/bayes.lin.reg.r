@@ -337,11 +337,15 @@ bayes.lin.reg = function(y, x, slope.prior = "flat",
   par(old.par)
   interceptResults = list(name = 'alpha[0]',
                           param.x = alpha.xbar,
-                          prior = prior.a, likelihood = likelihood.a, posterior = posterior.a)
+                          prior = prior.a, likelihood = likelihood.a, posterior = posterior.a,
+                          mean = post.mean.a,
+                          var = post.var.a)
   
   slopeResults = list(name = 'beta',
                       param.x = beta,
-                      prior = prior.b, likelihood = likelihood.b, posterior = posterior.b)
+                      prior = prior.b, likelihood = likelihood.b, posterior = posterior.b,
+                      mean = post.mean.b,
+                      var = post.var.b)
   
   class(interceptResults) = "Bolstad"
   class(slopeResults) = "Bolstad"
