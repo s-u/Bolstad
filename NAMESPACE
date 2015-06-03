@@ -6,6 +6,11 @@ export(IQR.default)
 export(as.data.frame.Bolstad)
 export(bayes.lin.reg)
 export(bayes.t.test)
+<<<<<<< HEAD
+=======
+export(bayes.t.test.default)
+export(bayes.t.test.formula)
+>>>>>>> 244fba6a0914cca4d53152f94186d53468f1f340
 export(binobp)
 export(binodp)
 export(binogcp)

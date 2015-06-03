@@ -1,7 +1,9 @@
+#' @export bayes.t.test
 bayes.t.test = function(x, ...){
   UseMethod("bayes.t.test")
 }
 
+#' @export bayes.t.test.default
 bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less", "greater"),
        mu = 0, paired = FALSE, var.equal = TRUE,
        conf.level = 0.95, prior = c("jeffreys", "joint.conj"), 
@@ -66,6 +68,7 @@ bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less"
       stop("data are essentially constant")
     
     name = 'mu'
+    name = if(!paired) 'mu' else 'mu[d]'
     
     if(prior == "jeffreys"){
       S1 = SSx
@@ -133,14 +136,25 @@ bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less"
     
     estimate = c(mx, my)
     names(estimate) = c("mean of x", "mean of y")
+    
+    lb = mx - my - 4 * sqrt(vx/nx + vy/ny)
+    ub = mx - my + 4 * sqrt(vx/nx + vy/ny)
+    param.x = seq(lb, ub, length = 1000)
+    name = 'mu[1]-mu[2]'
+    
     if (var.equal) {
       if(prior == "jeffreys"){
         kappa1 = nx + ny -2
+        kappa1 = nx + ny - 2
         sigma.sq.Pooled = SSp / kappa1 
         
         mpost = mx - my
         se.post = sqrt(sigma.sq.Pooled * (1/nx + 1/ny))
         df = kappa1
+        
+        prior = 1 / diff(range(param.x))
+        likelihood = dnorm(mx - my, param.x, se.post)
+        posterior = dt((param.x - mpost)/se.post, df)
       }else{
         kappa1 = kappa + nx + ny
         n1post = nx + n0[1]
@@ -153,6 +167,10 @@ bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less"
         mpost = m1post - m2post
         se.post = sqrt(sigma.sq.B * (1/n1post + 1/n2post))
         df = kappa1
+        
+        prior = dnorm(param.x, m[1] - m[2], sqrt(sum(1/n0)))
+        likelihood = dnorm(mx - my, param.x, se.post)
+        posterior = dt((param.x - mpost)/se.post, df)
       }
     }else {
      
@@ -200,6 +218,28 @@ bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less"
 }
 
 ## S3 method for class 'formula'
+#' @export bayes.t.test.formula
 bayes.t.test.formula = function(formula, data, subset, na.action, ...){
-  
+  ## shamelessly hacked from t.test.formula
+  if (missing(formula) || (length(formula) != 3L) || (length(attr(terms(formula[-2L]), 
+                                                                  "term.labels")) != 1L)) 
+    stop("'formula' missing or incorrect")
+  m = match.call(expand.dots = FALSE)
+  if (is.matrix(eval(m$data, parent.frame()))) 
+    m$data = as.data.frame(data)
+  m[[1L]] = quote(stats::model.frame)
+  m$... = NULL
+  mf = eval(m, parent.frame())
+  DNAME = paste(names(mf), collapse = " by ")
+  names(mf) = NULL
+  response = attr(attr(mf, "terms"), "response")
+  g = factor(mf[[-response]])
+  if (nlevels(g) != 2L) 
+    stop("grouping factor must have exactly 2 levels")
+  DATA = setNames(split(mf[[response]], g), c("x", "y"))
+  y = do.call("bayes.t.test", c(DATA, list(...)))
+  y$data.name = DNAME
+  if (length(y$estimate) == 2L) 
+    names(y$estimate) = paste("mean in group", levels(g))
+  y
 }
