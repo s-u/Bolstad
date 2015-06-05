@@ -6,21 +6,19 @@
 #' @param \dots any additional arguments. These are primarily used in \code{IQR.default}
 #'   which calls \code{stats::IQR}.
 #' @details If \code{x} is an object of class \code{Bolstad} then the posterior 
-#'   median of the parameter of interest will be calculated.
+#'   IQR of the parameter of interest will be calculated.
 #' @author James Curran
-#' @export IQR
+#' @export
 IQR = function(x, ...){
   UseMethod("IQR")
 }
 
-#' @describeIn IQR
-#' @export IQR.default
+#' @export
 IQR.default = function(x, ...){
   stats::IQR(x, ...)
 }
 
-#' @describeIn IQR
-#' @export IQR.Bolstad
+#' @export
 IQR.Bolstad = function(x, ...){
   return(diff(quantile(x, probs = c(0.25, 0.75), ...)))
 }

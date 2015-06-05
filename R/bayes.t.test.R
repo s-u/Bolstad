@@ -1,9 +1,80 @@
-#' @export bayes.t.test
+#' Bayesian t-Test
+#' 
+#' @description Performs one and two sample t-tests (in the Bayesian hypothesis testing framework) on vectors of data
+#' @param x a (non-empty) numeric vector of data values.
+#' @param y an optional (non-empty) numeric vector of data values.
+#' @param alternative a character string specifying the alternative hypothesis, must be one of 
+#' \code{"two.sided"} (default), \code{"greater"} or \code{"less"}. You can specify just the initial 
+#' letter.
+#' @param mu a number indicating the true value of the mean (or difference in means if you are performing a two sample test).
+#' @param paired a logical indicating whether you want a paired t-test.
+#' @param var.equal a logical variable indicating whether to treat the two variances as being equal. 
+#' If \code{TRUE} (default) then the pooled variance is used to estimate the variance otherwise the 
+#' Welch (or Satterthwaite) approximation to the degrees of freedom is used. The unequal variance case is not yet implented.
+#' @param conf.level confidence level of interval.
+#' @param prior a character string indicating which prior should be used for the means, must be one of
+#' \code{"jeffreys"} (default) for independent Jeffreys' priors on the unknown mean(s) and variance(s), 
+#' or \code{"joint.conj"} for a joint conjugate prior.
+#' @param m if the joint conjugate prior is used then the user must specify a prior mean in the one-sample
+#' or paired case, or two prior means in the two-sample case. Note that if the hypothesis is that there is no difference
+#' between the means in the two-sample case, then the values of the prior means should usually be equal, and if so, 
+#' then their actual values are irrelvant.This parameter is not used if the user chooses a Jeffreys' prior.
+#' @param n0 if the joint conjugate prior is used then the user must specify the prior precision 
+#' or precisions in the two sample case that represent our level of uncertainty
+#' about the true mean(s). This parameter is not used if the user chooses a Jeffreys' prior.
+#' @param sig.med if the joint conjugate prior is used then the user must specify the prior median
+#' for the unknown standard deviation. This parameter is not used if the user chooses a Jeffreys' prior.
+#' @param kappa if the joint conjugate prior is used then the user must specify the degrees of freedom
+#' for the inverse chi-squared distribution used for the unknown standard deviation. Usually the default
+#' of 1 will be sufficient. This parameter is not used if the user chooses a Jeffreys' prior.
+#' @param formula a formula of the form \code{lhs ~ rhs} where lhs is a numeric variable giving the data values and rhs a factor with two 
+#' levels giving the corresponding groups.
+#' @param data an optional matrix or data frame (or similar: see \code{\link{model.frame}}) containing 
+#' the variables in the formula formula. By default the variables are taken from \code{environment(formula)}.
+#' @param subset currently ingored.
+#' @param na.action currently ignored.
+#' @return A list with class "htest" containing the following components:
+#'  \item{statistic}{the value of the t-statistic.}
+#'  \item{parameter}{the degrees of freedom for the t-statistic.}                                                                                        
+#'   \item{p.value}{the p-value for the test.}"                                                                                                              
+#'   \item{conf.int}{a confidence interval for the mean appropriate to the specified alternative hypothesis.}
+#'   \item{estimate}{the estimated mean or difference in means depending on whether it was a one-sample test or a two-sample test.}
+#'   \item{null.value}{the specified hypothesized value of the mean or mean difference depending on whether it was a one-sample test or a two-sample test.}
+#'   \item{alternative}{a character string describing the alternative hypothesis.}
+#'   \item{method}{a character string indicating what type of t-test was performed.}
+#'   \item{data.name}{a character string giving the name(s) of the data.}
+#'   \item{result}{an object of class \code{Bolstad}}
+#' @examples
+#' bayes.t.test(1:10, y = c(7:20))      # P = .3.691e-01
+#' 
+#' ## Same example but with using the joint conjugate prior
+#' ## We set the prior means equal (and it doesn't matter what the value is)
+#' ## the prior precision is 0.01, which is a prior standard deviation of 10
+#' ## we're saying the true difference of the means is between [-25.7, 25.7]
+#' ## with probability equal to 0.99. The median value for the prior on sigma is 2
+#' ## and we're using a scaled inverse chi-squared prior with 1 degree of freedom
+#' bayes.t.test(1:10, y = c(7:20), var.equal = T, prior = "joint.conj", 
+#'              m = c(0,0), n0 =  rep(0.01, 2), sig.med = 2)
+#' 
+#' ##' Same example but with a large outlier. Note the assumption of equal variances isn't sensible
+#' bayes.t.test(1:10, y = c(7:20, 200)) # P = .1979    -- NOT significant anymore
+#' 
+#' ## Classical example: Student's sleep data
+#' plot(extra ~ group, data = sleep)
+#' 
+#' ## Traditional interface
+#' with(sleep, bayes.t.test(extra[group == 1], extra[group == 2]))
+#' 
+#' ## Formula interface
+#' bayes.t.test(extra ~ group, data = sleep)
+#' @author R Core with Bayesian internals added by James Curran
+#' @export 
 bayes.t.test = function(x, ...){
   UseMethod("bayes.t.test")
 }
 
-#' @export bayes.t.test.default
+#' @method bayes.t.test default
+#' @export
 bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less", "greater"),
        mu = 0, paired = FALSE, var.equal = TRUE,
        conf.level = 0.95, prior = c("jeffreys", "joint.conj"), 
@@ -29,6 +100,8 @@ bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less"
                                  conf.level < 0 || conf.level > 1)) 
     stop("'conf.level' must be a single number between 0 and 1")
   
+  param.x = NULL
+    
   if (!is.null(y)) {
     dname = paste(deparse(substitute(x)), "and", deparse(substitute(y)))
     if (paired) 
@@ -58,7 +131,7 @@ bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less"
   SSx = sum((x-mx)^2)
   vx = var(x)
   estimate = 0
-  
+   
   if (is.null(y)) { ## one sample or paired
     if (nx < 2) 
       stop("not enough 'x' observations")
@@ -217,8 +290,8 @@ bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less"
   return(rval)
 }
 
-## S3 method for class 'formula'
-#' @export bayes.t.test.formula
+#' @method bayes.t.test formula
+#' @export
 bayes.t.test.formula = function(formula, data, subset, na.action, ...){
   ## shamelessly hacked from t.test.formula
   if (missing(formula) || (length(formula) != 3L) || (length(attr(terms(formula[-2L]), 

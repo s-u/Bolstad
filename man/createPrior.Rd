@@ -2,16 +2,15 @@
 % Please edit documentation in R/createPrior.R
 \name{createPrior}
 \alias{createPrior}
-\alias{createPrior.default}
 \title{Create prior generic}
 \usage{
 createPrior(x, ...)
-
-\method{createPrior}{default}(x, wt, ...)
 }
 \arguments{
+\item{x}{a vector of x values at which the prior is to be specified (the support of the prior).}
+
 \item{wt}{a vector of weights corresponding to the weight of the prior at the
-given x values}
+given x values.}
 }
 \value{
 a linear interpolation function where the weights have been scaled so
@@ -20,8 +19,4 @@ a linear interpolation function where the weights have been scaled so
 \description{
 Create prior generic
 }
-\section{Methods (by class)}{
-\itemize{
-\item \code{default}: 
-}}
 

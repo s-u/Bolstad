@@ -4,8 +4,9 @@
 \alias{binogcp}
 \title{Binomial sampling with a general continuous prior}
 \usage{
-binogcp(x, n, density = "uniform", params = c(0, 1), n.pi = 1000,
-  pi = NULL, pi.prior = NULL, plot = TRUE)
+binogcp(x, n, density = c("uniform", "beta", "exp", "normal", "user"),
+  params = c(0, 1), n.pi = 1000, pi = NULL, pi.prior = NULL,
+  plot = TRUE)
 }
 \arguments{
 \item{x}{the number of observed successes in the binomial experiment.}
@@ -16,16 +17,16 @@ binogcp(x, n, density = "uniform", params = c(0, 1), n.pi = 1000,
 or "user"}
 
 \item{params}{if density is one of the parameteric forms then then a vector
-of parameters must be supplied.  beta: a,b exp: rate normal: mean,sd
-uniform: min,max}
+of parameters must be supplied.  beta: a, b exp: rate normal: mean, sd
+uniform: min, max}
 
 \item{n.pi}{the number of possible \eqn{\pi}{pi} values in the prior}
 
 \item{pi}{a vector of possibilities for the probability of success in a
-single trial. This must be set if density="user".}
+single trial. This must be set if density = "user".}
 
 \item{pi.prior}{the associated prior probability mass. This must be set if
-density="user".}
+density = "user".}
 
 \item{plot}{if \code{TRUE} then a plot showing the prior and the posterior
 will be produced.}
@@ -46,51 +47,47 @@ continuous prior on \eqn{\pi}{pi}
 \examples{
 ## simplest call with 6 successes observed in 8 trials and a continuous
 ## uniform prior
-binogcp(6,8)
+binogcp(6, 8)
 
-## 6 successes, 8 trials and a Beta(2,2) prior
-binogcp(6,8,density="beta",params=c(2,2))
+## 6 successes, 8 trials and a Beta(2, 2) prior
+binogcp(6, 8,density = "beta", params = c(2, 2))
 
-## 5 successes, 10 trials and a N(0.5,0.25) prior
-binogcp(5,10,density="normal",params=c(0.5,0.25))
+## 5 successes, 10 trials and a N(0.5, 0.25) prior
+binogcp(5, 10, density = "normal", params = c(0.5, 0.25))
 
 ## 4 successes, 12 trials with a user specified triangular continuous prior
-pi = seq(0,1,by=0.001)
-pi.prior = rep(0,length(pi))
-pi.prior[pi<=0.5] = 4*pi[pi<=0.5]
-pi.prior[pi>0.5] = 4-4*pi[pi>0.5]
-results = binogcp(4,12,"user",pi=pi,pi.prior=pi.prior)
+pi = seq(0, 1,by = 0.001)
+pi.prior = rep(0, length(pi))
+priorFun = createPrior(x = c(0, 0.5, 1), wt = c(0, 2, 0))
+pi.prior = priorFun(pi)
+results = binogcp(4, 12, "user", pi = pi, pi.prior = pi.prior)
 
 ## find the posterior CDF using the previous example and Simpson's rule
-## Please note that the syntax of sintegral has changed since the
-## second edition of the book
-cdf = sintegral(pi,results$posterior,n.pts=length(pi))$cdf
-plot(cdf,type="l",xlab=expression(pi[0])
-	,ylab=expression(Pr(pi<=pi[0])))
+myCdf = cdf(results)
+plot(myCdf, type = "l", xlab = expression(pi[0]),
+	   ylab = expression(Pr(pi <= pi[0])))
 
-## use the cdf to find the 95\% credible region.
-## Thanks to John Wilkinson for this simplified code.
-lcb = cdf$x[with(cdf,which.max(x[y<=0.025]))]
-ucb = cdf$x[with(cdf,which.max(x[y<=0.975]))]
+## use the quantile function to find the 95\% credible region.
+qtls = quantile(result, probs = c(0.025, 0.975))
 cat(paste("Approximate 95\% credible interval : ["
-	,round(lcb,4)," ",round(ucb,4),"]\\n",sep=""))
+	, round(qtls[1], 4), " ", round(qtls, 4), "]\\n", sep = ""))
 
 ## find the posterior mean, variance and std. deviation
 ## using Simpson's rule and the output from the previous example
-dens = pi*results$posterior # calculate pi*f(pi | x, n)
-post.mean = sintegral(pi,dens)$value
+dens = pi * results$posterior # calculate pi * f(pi | x, n)
+post.mean = sintegral(pi, dens)$value
 
-dens = (pi-post.mean)^2*results$posterior
-post.var = sintegral(pi,dens)$value
+dens = (pi - post.mean)^2 * results$posterior
+post.var = sintegral(pi, dens)$value
 post.sd = sqrt(post.var)
 
 # calculate an approximate 95\% credible region using the posterior mean and
 # std. deviation
-lb = post.mean-qnorm(0.975)*post.sd
-ub = post.mean+qnorm(0.975)*post.sd
+lb = post.mean - qnorm(0.975) * post.sd
+ub = post.mean + qnorm(0.975) * post.sd
 
 cat(paste("Approximate 95\% credible interval : ["
-	,round(lb,4)," ",round(ub,4),"]\\n",sep=""))
+	, round(lb, 4), " ", round(ub, 4), "]\\n", sep = ""))
 }
 \seealso{
 \code{\link{binobp}} \code{\link{binodp}}

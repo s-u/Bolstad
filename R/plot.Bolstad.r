@@ -31,7 +31,7 @@
 #' plot(b)
 #' plot(b, which = 1:3)
 #' plot(b, overlay = FALSE, which = 1:3)
-#' @export plot.Bolstad
+#' @export
 plot.Bolstad = function(x, overlay = TRUE, which = c(1, 3), 
                         densCols = c("red","green","blue")[which],
                         legendLoc = "topleft", 

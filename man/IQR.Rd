@@ -2,15 +2,9 @@
 % Please edit documentation in R/IQR.R
 \name{IQR}
 \alias{IQR}
-\alias{IQR.Bolstad}
-\alias{IQR.default}
 \title{Interquartile Range generic}
 \usage{
 IQR(x, ...)
-
-\method{IQR}{default}(x, ...)
-
-\method{IQR}{Bolstad}(x, ...)
 }
 \arguments{
 \item{x}{an object.}
@@ -23,14 +17,8 @@ Compute the interquartile range.
 }
 \details{
 If \code{x} is an object of class \code{Bolstad} then the posterior
-  median of the parameter of interest will be calculated.
+  IQR of the parameter of interest will be calculated.
 }
-\section{Methods (by class)}{
-\itemize{
-\item \code{default}: 
-
-\item \code{Bolstad}: 
-}}
 \author{
 James Curran
 }

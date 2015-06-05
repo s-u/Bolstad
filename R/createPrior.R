@@ -1,17 +1,16 @@
 #' Create prior generic
 #' 
-#' 
-#' @export createPrior
+#' @param x a vector of x values at which the prior is to be specified (the support of the prior).
+#' @param wt a vector of weights corresponding to the weight of the prior at the
+#'   given x values.
+#' @return a linear interpolation function where the weights have been scaled so
+#'   the function (numerically) integrates to 1.
+#' @export
 createPrior = function(x, ...){
   UseMethod("createPrior")
 }
 
-#' @describeIn createPrior
-#' @param wt a vector of weights corresponding to the weight of the prior at the
-#'   given x values
-#' @return a linear interpolation function where the weights have been scaled so
-#'   the function (numerically) integrates to 1.
-#' @export createPrior.default
+#' @export
 createPrior.default = function(x, wt, ...){
   if(length(x) != length(wt))
     stop("x and wt must be of equal length")
