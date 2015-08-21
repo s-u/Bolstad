@@ -73,13 +73,10 @@ cat(paste("Approximate 95\% credible interval : ["
 	, round(qtls[1], 4), " ", round(qtls, 4), "]\\n", sep = ""))
 
 ## find the posterior mean, variance and std. deviation
-## using Simpson's rule and the output from the previous example
-dens = pi * results$posterior # calculate pi * f(pi | x, n)
-post.mean = sintegral(pi, dens)$value
-
-dens = (pi - post.mean)^2 * results$posterior
-post.var = sintegral(pi, dens)$value
-post.sd = sqrt(post.var)
+## using the output from the previous example
+post.mean = mean(results)
+post.var = var(results)
+post.sd = sd(results)
 
 # calculate an approximate 95\% credible region using the posterior mean and
 # std. deviation
