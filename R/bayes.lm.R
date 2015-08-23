@@ -138,7 +138,7 @@ bayes.lm = function(formula, data, subset, na.action, model = TRUE, x = FALSE, y
       prior.prec = solve(prior$V0)
       r = residuals(z.ls)
       resMS = sum((r - mean(r))^2) / (nrow(x) - ncol(x))
-      ls.prec = solve(t(x)%*%x) * resMS
+      ls.prec = solve(vcov(fit))
       post.prec = prior.prec + ls.prec
       V1 = solve(post.prec)
       b1 = V1 %*% prior.prec %*% prior$b0 + V1 %*% ls.prec %*% coef(z.ls)
@@ -149,15 +149,15 @@ bayes.lm = function(formula, data, subset, na.action, model = TRUE, x = FALSE, y
     }else{
       r = residuals(z.ls)
       resMS = sum((r - mean(r))^2) / ncol(x)
-      ls.prec = solve(t(x)%*%x) * resMS
+      
       
       z$post.mean = z$coefficients
-      z$post.var = solve(ls.prec)
+      z$post.var = vcov(z)
       z$post.sd = sqrt(resMS)
     }
     
     z$fitted.values = x %*% z$post.mean
-    z$residuals = response - z$fitted.values
+    z$residuals = y - z$fitted.values
     z$df.residual = nrow(x) - ncol(x)
   }
   class(z) = c("Bolstad")
