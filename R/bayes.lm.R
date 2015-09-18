@@ -133,27 +133,25 @@ bayes.lm = function(formula, data, subset, na.action, model = TRUE, x = FALSE, y
     }
       
     z = z.ls = lm.fit(x, y)
+    p1 = 1:z$rank
+    z$cov.unscaled = chol2inv(z$qr$qr[p1, p1, drop = FALSE])
     
     if(!is.null(prior)){
       prior.prec = solve(prior$V0)
-      r = residuals(z.ls)
-      resMS = sum((r - mean(r))^2) / (nrow(x) - ncol(x))
-      ls.prec = solve(vcov(fit))
+      resVar = sum(z$residuals^2) / z$df.residual
+      ls.prec = solve(resVar * z$cov.unscaled)
       post.prec = prior.prec + ls.prec
       V1 = solve(post.prec)
       b1 = V1 %*% prior.prec %*% prior$b0 + V1 %*% ls.prec %*% coef(z.ls)
       z$post.mean = z$coefficients = as.vector(b1)
       z$post.var = V1
-      z$post.sd = sqrt(resMS)
+      z$post.sd = sqrt(resVar)
       
     }else{
-      r = residuals(z.ls)
-      resMS = sum((r - mean(r))^2) / ncol(x)
-      
-      
+      resVar = sum(z$residuals^2) / z$df.residual
       z$post.mean = z$coefficients
-      z$post.var = vcov(z)
-      z$post.sd = sqrt(resMS)
+      z$post.var = resVar * z$cov.unscaled
+      z$post.sd = sqrt(resVar)
     }
     
     z$fitted.values = x %*% z$post.mean
@@ -170,5 +168,7 @@ bayes.lm = function(formula, data, subset, na.action, model = TRUE, x = FALSE, y
     z$x = x
   if (ret.y) 
     z$y = y
+  
+  
   z
 }
