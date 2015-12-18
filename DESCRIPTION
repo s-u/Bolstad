@@ -1,0 +1,14 @@
+Package: Bolstad
+Version: 0.2-28
+Date: 2015-12-18
+Title: Bolstad Functions
+Author: James Curran <j.curran@auckland.ac.nz>
+Maintainer: James Curran <j.curran@auckland.ac.nz>
+Description: A set of R functions and data sets for the book Introduction to
+    Bayesian Statistics, Bolstad, W.M. (2007), John Wiley & Sons ISBN 0-471-27020-2.
+License: GPL (>= 2)
+LazyData: true
+Depends:
+    stats,
+    mvtnorm
+RoxygenNote: 5.0.1
