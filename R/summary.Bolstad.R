@@ -1,16 +1,16 @@
-#' Print method for objects of class \code{sscsample}
+#' Summarizing Bayesian Multiple Linear Regression
 #' 
-#' This function provides a print summary method for the output of
-#' \code{sscsample}. The \code{sscsample} produces a large number of samples
-#' from a fixed population using either simple random, stratified, or cluster
-#' sampling. This function provides the means of each sample plus the number of
-#' observations from each ethnicity stratum in the sample.
+#' \code{summary} method for output of \code{\link{bayes.lm}}.
 #' 
 #' 
-#' @param x an object of class \code{sscsamp} produced by \code{sscsample}
-#' @param \dots any other arguments that are to be passed to \code{cat}
-#' @author James Curran
-#' @seealso \code{\link{sscsample}}
+#' @param object an object of "\code{Bolstad}" that is the result of a call to \code{\link{bayes.lm}}
+#' @param \dots any further arguments to be passed to \code{print}
+#' 
+#' 
+#' @seealso The function to fit the model \code{\link{bayes.lm}}
+#' 
+#' The function \code{\link{coef}} to extract the matrix of posterior means along with standard errors and t-statistics.
+#' 
 #' @export
 
 summary.Bolstad = function(object, ...) {
@@ -30,7 +30,7 @@ summary.Bolstad = function(object, ...) {
              prior.coef = rep(0, 7), 
              prior.cov = diag(rep(1e6,7)),
              residuals = as.vector(z$residuals),
-             res.df = z$df.residual)
+             res.df = z$df.residual, ...)
   class(ans) = "summary.Bolstad"
   ans
 }
