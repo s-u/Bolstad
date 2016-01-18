@@ -53,7 +53,7 @@
 #' ## we're saying the true difference of the means is between [-25.7, 25.7]
 #' ## with probability equal to 0.99. The median value for the prior on sigma is 2
 #' ## and we're using a scaled inverse chi-squared prior with 1 degree of freedom
-#' bayes.t.test(1:10, y = c(7:20), var.equal = T, prior = "joint.conj", 
+#' bayes.t.test(1:10, y = c(7:20), var.equal = TRUE, prior = "joint.conj", 
 #'              m = c(0,0), n0 =  rep(0.01, 2), sig.med = 2)
 #' 
 #' ##' Same example but with a large outlier. Note the assumption of equal variances isn't sensible
