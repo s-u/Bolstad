@@ -52,20 +52,20 @@
 #' extract various useful features of the value returned by \code{bayes.lm}. Note that the residuals
 #' are computed at the posterior mean values of the coefficients.
 #' 
-#' #' An object of class "Bolstad" from this function is a list containing at least the following components:
-#' \item{coefficients} a named vector of coefficients which contains the posterior mean
-#' \item{post.var} a matrix containing the posterior variance-covariance matrix of the coefficients
-#' \item{post.sd} sigma.
-#' \item{residuals} the residuals, that is response minus fitted values (computed at the posterior mean).
-#' \item{fitted.values} the fitted mean values (computed at the posterior mean).
-#' \item{df.residual} the residual degrees of freedom.
-#' \item{call} the matched call.
-#' \item{terms} the \code{\link[stats]{terms}} object used.
-#' \item{y} if requested, the response used.
-#' \item{x} if requested, the model matrix used.
-#' \item{model} if requested (the default), the model frame used.
-#' \item{na.action} (where relevant) information returned by \code{model.frame} on the special 
-#' handling of \code{NA}s.
+#' An object of class "Bolstad" from this function is a list containing at least the following components:
+#' \item{coefficients}{a named vector of coefficients which contains the posterior mean}
+#' \item{post.var}{a matrix containing the posterior variance-covariance matrix of the coefficients}
+#' \item{post.sd}{sigma}
+#' \item{residuals}{the residuals, that is response minus fitted values (computed at the posterior mean)}
+#' \item{fitted.values}{the fitted mean values (computed at the posterior mean)}
+#' \item{df.residual}{the residual degrees of freedom}
+#' \item{call}{the matched call}
+#' \item{terms}{the \code{\link[stats]{terms}} object used}
+#' \item{y}{if requested, the response used}
+#' \item{x}{if requested, the model matrix used}
+#' \item{model}{if requested (the default), the model frame used}
+#' \item{na.action}{(where relevant) information returned by \code{model.frame} on the special 
+#' handling of \code{NA}s}
 #' 
 #' @keywords misc
 #' @examples
@@ -133,6 +133,7 @@ bayes.lm = function(formula, data, subset, na.action, model = TRUE, x = FALSE, y
     p1 = 1:z$rank
     z$cov.unscaled = chol2inv(z$qr$qr[p1, p1, drop = FALSE])
     
+    z$prior = prior
     if(!is.null(prior)){
       prior.prec = solve(prior$V0)
       resVar = sum(z$residuals^2) / z$df.residual
@@ -165,6 +166,7 @@ bayes.lm = function(formula, data, subset, na.action, model = TRUE, x = FALSE, y
     z$x = x
   if (ret.y) 
     z$y = y
+  
   
   
   z
