@@ -15,8 +15,9 @@ cdf = function(x, ...){
   UseMethod("cdf")
 }
 
-#' @describeIn cdf
+#' @describeIn cdf Cumulative distribution function for Bayesian statistics
 #' @export cdf.Bolstad
+#' 
 cdf.Bolstad = function(x, ...){
   if(class(x) != "Bolstad")
     stop("x must be an object of class Bolstad")
