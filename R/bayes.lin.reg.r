@@ -71,18 +71,19 @@
 #' HR = c(94,96,94,95,104,106,108,113,115,121,131)
 #' plot(HR,O2,xlab="Heart Rate",ylab="Oxygen uptake (Percent)")
 #' 
-#' bayes.lin.reg(y,x,"n","f",0,1,sigma=0.13)
+#' bayes.lin.reg(O2,HR,"n","f",0,1,sigma=0.13)
 #' 
 #' ## Repeat the example but obtain predictions for HR = 100 and 110
 #' 
-#' bayes.lin.reg(y,x,"n","f",0,1,sigma=0.13,pred.x=c(100,110))
+#' bayes.lin.reg(O2,HR,"n","f",0,1,sigma=0.13,pred.x=c(100,110))
 #' 
 #' @export bayes.lin.reg
+
 bayes.lin.reg = function(y, x, slope.prior = "flat", 
                         intcpt.prior = "flat", 
                         mb0 = 0, sb0 = 0, ma0 = 0, sa0 = 0, 
                         sigma = NULL, alpha = 0.05, plot.data = FALSE, 
-                        pred.x = NULL){
+                        pred.x = NULL) {
 
   if(sum(is.na(y)) > 0 || sum(is.na(x)) > 0)
     stop("Error: x and y may not contain missing values")
@@ -145,7 +146,7 @@ bayes.lin.reg = function(y, x, slope.prior = "flat",
     sigma.known = FALSE
     sigma = sqrt(sum((y - (Ax.bar + b.ls * (x - x.bar)))^2)/ (n - 2))
     cat(paste("Standard deviation of residuals: ", signif(sigma, 3), "\n"))
-  }else{
+  } else {
     cat(paste("Known standard deviation: ", signif(sigma, 3), "\n"))
   }
 
@@ -156,43 +157,59 @@ bayes.lin.reg = function(y, x, slope.prior = "flat",
   beta = prior.b
   likelihood.b = prior.b
   posterior.b = prior.b
-
-  if(slope.prior == "flat"){
+  
+  d = as.data.frame(cbind(y, x))
+  
+  if (slope.prior == "flat") {
     prior.prec.b = 0
-    ## should be zero by default but make sure it is.
     mb0 = 0
-    prec.ls = SSx / sigma^2
-    sd.ls = sqrt(1 / prec.ls)
-    post.prec.b = prior.prec.b + prec.ls
-    post.var.b = 1 / post.prec.b
-    post.sd.b = sqrt(post.var.b)
-    post.mean.b = prior.prec.b / post.prec.b * mb0 + prec.ls / post.prec.b * b.ls
+    sb0 = 1 # ???
+    bnd.mult.b = 4
+  } else { 
+    prior.prec.b = 1 / sb0^2
+    bnd.mult.b = 3
+  }
+  
+  if (intcpt.prior == "flat") {
+    prior.prec.a = 0
+    ma0 = 0
+    sa0 = 1 # ???
+    bnd.mult.a = 4
+  } else {
+    prior.prec.a = 1 / sa0^2
+    bnd.mult.a = 3
+  }
+  
+  mdl = bayes.lm(y ~ x, data = d, model = FALSE, prior = list(b0 = c(ma0, mb0), V0 = diag(c(sa0^2, sb0^2))))
+  
+  ################
+  # SLOPE 
+  ################
+  
+  prec.ls = SSx / sigma^2
+  sd.ls = sqrt(1 / prec.ls)
+  post.prec.b = prior.prec.b + prec.ls
 
-    lb = post.mean.b - 4 * post.sd.b
-    ub = post.mean.b + 4 * post.sd.b
-    beta = seq(lb, ub, length = 1001)
+  post.var.b = mdl$post.var[2, 2]
+  post.sd.b = sqrt(post.var.b)
+  post.mean.b = mdl$post.mean[2]
+  
+  lb = post.mean.b - bnd.mult.b * post.sd.b
+  ub = post.mean.b + bnd.mult.b * post.sd.b
+  
+  beta = seq(lb, ub, length = 1001)
+  
+  if (slope.prior == "flat") {
     prior.b = rep(1, 1001)
     norm.const = 0.5 * (2 * sum(prior.b) - prior.b[1] - prior.b[1001] * ((ub - lb) * 0.001))
     prior.b = prior.b / norm.const
-    likelihood.b = dnorm(beta, b.ls, sd.ls)
-    posterior.b = dnorm(beta, post.mean.b, post.sd.b)
-  }else{
-    prior.prec.b = 1 / sb0^2
-    prec.ls = SSx / sigma^2
-    sd.ls = sqrt(1 / prec.ls)
-    post.prec.b = prior.prec.b + prec.ls
-    post.var.b = 1 / post.prec.b
-    post.sd.b = sqrt(post.var.b)
-    post.mean.b = prior.prec.b / post.prec.b * mb0 + prec.ls / post.prec.b * b.ls
-
-    lb = post.mean.b - 3 * post.sd.b
-    ub = post.mean.b + 3 * post.sd.b
-    beta = seq(lb, ub, length = 1001)
+  } else {
     prior.b = dnorm(beta, mb0, sb0)
-    likelihood.b = dnorm(beta, b.ls, sd.ls)
-    posterior.b = dnorm(beta, post.mean.b, post.sd.b)
   }
-
+  
+  likelihood.b = dnorm(beta, b.ls, sd.ls)
+  posterior.b = dnorm(beta, post.mean.b, post.sd.b)
+  
   old.par = par(mfrow = c(2, 2))
 
   y.max = max(c(prior.b, likelihood.b, posterior.b))
@@ -208,46 +225,36 @@ bayes.lin.reg = function(y, x, slope.prior = "flat",
          lty = 1:3, col = c("black", "red", "blue"), 
          legend = c("Prior", "Likelihood", "Posterior"))
 
+  ####################################################################################
+  
   alpha.xbar = rep(0, 1001)
   prior.a = alpha.xbar
   likelihood.a = alpha.xbar
   posterior.a = alpha.xbar
+  
+  prec.ls = n / (sigma^2)
+  sd.ls = sqrt(1 / prec.ls)
+  post.prec.a = prior.prec.a + prec.ls
+  
+  post.var.a = mdl$post.var[1, 1]
+  post.sd.a = sqrt(post.var.a)
+  post.mean.a = mdl$post.mean[1]
+  
+  lb = post.mean.a - bnd.mult.a * post.sd.a
+  ub = post.mean.a + bnd.mult.a * post.sd.a
 
-  if(intcpt.prior == "flat"){
-    prior.prec.a = 0
-    ##should be zero by default but make sure
-    ma0 = 0
-    prec.ls = n / (sigma^2)
-    sd.ls = sqrt(1 / prec.ls)
-    post.prec.a = prior.prec.a + prec.ls
-    post.var.a = 1 / post.prec.a
-    post.sd.a = 1 / sqrt(post.prec.a)
-    post.mean.a = prior.prec.a / post.prec.a * ma0 + prec.ls / post.prec.a * y.bar
-
-    lb = post.mean.a - 4 * post.sd.a
-    ub = post.mean.a + 4 * post.sd.a
-    alpha.xbar = seq(lb , ub , length = 1001)
+  alpha.xbar = seq(lb, ub, length = 1001)
+  
+  if(intcpt.prior == "flat") {
     prior.a = rep(1, 1001)
     norm.const = (2 * sum(prior.a) - prior.a[1] - prior.a[1001] * ((ub - lb) / 1000)) / 2
     prior.a = prior.a / norm.const
-    likelihood.a = dnorm(alpha.xbar, y.bar, sd.ls)
-    posterior.a = dnorm(alpha.xbar, post.mean.a, post.sd.a)
-  }else{
-    prior.prec.a = 1 / sa0^2
-    prec.ls = n / (sigma^2)
-    sd.ls = sqrt(1 / prec.ls)
-    post.prec.a = prior.prec.a + prec.ls
-    post.var.a = 1 / post.prec.a
-    post.sd.a = sqrt(post.var.a)
-    post.mean.a = prior.prec.a / post.prec.a * ma0 + prec.ls / post.prec.a * y.bar
-
-    lb = post.mean.a - 3 * post.sd.a
-    ub = post.mean.a + 3 * post.sd.a
-    alpha.xbar = seq(lb, ub, length = 1001)
+  } else {
     prior.a = dnorm(alpha.xbar, ma0, sa0)
-    likelihood.a = dnorm(alpha.xbar, y.bar, sd.ls)
-    posterior.a = dnorm(alpha.xbar, post.mean.a, post.sd.a)
   }
+  
+  likelihood.a = dnorm(alpha.xbar, y.bar, sd.ls)
+  posterior.a = dnorm(alpha.xbar, post.mean.a, post.sd.a)
 
   cat("\t\tPosterior Mean\tPosterior Std. Deviation\n")
   cat("\t\t - -- - -- - -- - -- - -\t - -- - -- - -- - -- - -- - -- - -- - --\n")
@@ -279,7 +286,7 @@ bayes.lin.reg = function(y, x, slope.prior = "flat",
     t.crit = qt(1 - alpha * .5, n - 2)
     pred.lb = pred.y - t.crit * se.pred
     pred.ub = pred.y + t.crit * se.pred
-  }else{
+  } else{
     s.e = sqrt(x2.bar - x.bar^2)
     x.lwr = x.bar - 3 * s.e
     x.upr = x.bar + 3 * s.e
@@ -295,14 +302,12 @@ bayes.lin.reg = function(y, x, slope.prior = "flat",
   y.max = max(pred.ub)
   y.min = min(pred.lb)
 
-  print(c(y.min, y.max))
-
 
   if(plot.data){
     plot(y~x, main = paste("Predicitions with ", round(100 * (1 - alpha))
                ,"% bounds", sep = ""), xlab = "x", ylab = "y", ylim = 1.1 * c(y.min, y.max))
     lines(x.values, pred.y, lty = 1, col = "black")
-  }else{
+  } else{
     plot(x.values, pred.y, type = "l", lty = 1, col = "black", 
          main = paste("Predicitions with ", round(100 * (1 - alpha)), 
            "% bounds", sep = ""), xlab = "x", ylab = "y", 
@@ -356,7 +361,7 @@ bayes.lin.reg = function(y, x, slope.prior = "flat",
                      post.coef = c(post.mean.a, post.mean.b), 
                      post.coef.sd = c(post.sd.a, post.sd.b), 
                   pred.x = pred.x, pred.y = pred.y, pred.se = pred.se))
-  }else{
+  } else{
       invisible(list(intercept = interceptResults, 
                      slope = slopeResults,
                      post.coef = c(post.mean.a, post.mean.b), 
