@@ -19,16 +19,12 @@ summary.Bolstad = function(object, ...) {
   
   z = object
   
-  # if prior.coef = NULL; prior = FALSE
-  
   ans = list(rank = z$rank,
              call = z$call,
              terms = c("(Intercept)", getTermLabels(z)),
              coef = z$coefficients,
              std.err = diag(z$post.var),
-             prior = TRUE,
-             prior.coef = rep(0, 7), 
-             prior.cov = diag(rep(1e6,7)),
+             prior = z$prior,
              residuals = as.vector(z$residuals),
              res.df = z$df.residual, ...)
   class(ans) = "summary.Bolstad"
