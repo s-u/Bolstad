@@ -1,9 +1,27 @@
+#' Variance generic
+#'
+#' @param x an object for which we want to compute the variance
+#' @param \dots Any additional arguments to be passed to \code{var}.
+#' @export
+
 var = function(x, ...)
   UseMethod("var")
+
+#' @describeIn var
+#'  
+#'  Makes sure that the base \code{stats::var} gets called for anything
+#'  other than an object of class \code{Bolstad}.
+#'  @method var default
+#'  @export
 
 var.default = function(x, ...){
   stats::var(x, ...)
 }
+
+#' @describeIn var
+#' 
+#' 
+#' @export
 
 var.Bolstad = function(x, ...){
   if(any(grepl("var", names(x))))
