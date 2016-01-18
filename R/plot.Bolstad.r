@@ -20,6 +20,11 @@
 #'   or \code{"topleft"}
 #' @param scaleLike If \code{TRUE}, then the likelihood will be scaled to have
 #'   approximately the same maximum value as the posterior
+#' @param xlab Label for x axis
+#' @param ylab Label for y axis
+#' @param main Title of plot
+#' @param ylim Vector giving y coordinate range
+#' @param cex Character expansion multiplier
 #' @param \dots Any remaining arguments are fed to the \code{plot} command
 #' @author James Curran
 #' @keywords plot
