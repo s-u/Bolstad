@@ -21,6 +21,8 @@
 #' @param center logical or numeric. If \code{TRUE} then the covariates will be centered on their means to make them
 #' orthogonal to the intercept. This probably makes no sense for models with factors, and if the argument
 #' is numeric then it contains a vector of covariate indices to be centered (not implemented yet).
+#' @param prior A list containing b0 (A vector of prior coefficients) and V0 (A prior covariance matrix)
+#' 
 #' @details Models for \code{bayes.lm} are specified symbolically. A typical model has the form 
 #' \code{response ~ terms} where \code{response} is the (numeric) response vector and \code{terms} is a
 #'  series of terms which specifies a linear predictor for \code{response}. A terms specification of the 
