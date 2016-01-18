@@ -8,6 +8,7 @@
 #' 
 #' 
 #' @param x an object of class \code{sscsamp} produced by \code{sscsample}
+#' @param digits number of digits to print 
 #' @param \dots any other arguments that are to be passed to \code{cat}
 #' @author James Curran
 #' @seealso \code{\link{sscsample}}
