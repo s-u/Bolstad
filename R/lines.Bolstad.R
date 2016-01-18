@@ -5,6 +5,9 @@
 #' @param x an object of class \code{Bolstad}.
 #' @param \dots any additional parameters to be passed to \code{graphics::lines}.
 #' @method lines.Bolstad
+#' 
+#' @describeIn lines Lines method for Bolstad objects
 #' @export lines.Bolstad
+
 lines.Bolstad = function(x, ...)
   lines(x$param.x, x$posterior, ...)
