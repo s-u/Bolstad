@@ -4,6 +4,9 @@
 #' @param \dots currently ignored 
 #' @author James Curran
 #' @method median.Bolstad
+#' 
+#' @describeIn median Compute posterior median
+#' 
 median.Bolstad = function(x, ...){
   return(quantile(x, probs = 0.5))
 }
