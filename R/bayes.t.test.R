@@ -33,6 +33,7 @@
 #' the variables in the formula formula. By default the variables are taken from \code{environment(formula)}.
 #' @param subset currently ingored.
 #' @param na.action currently ignored.
+#' @param ... any additional arguments
 #' @return A list with class "htest" containing the following components:
 #'  \item{statistic}{the value of the t-statistic.}
 #'  \item{parameter}{the degrees of freedom for the t-statistic.}                                                                                        
@@ -69,7 +70,7 @@
 #' bayes.t.test(extra ~ group, data = sleep)
 #' @author R Core with Bayesian internals added by James Curran
 #' @export 
-bayes.t.test = function(x, ...){
+bayes.t.test = function(x,  ...){
   UseMethod("bayes.t.test")
 }
 
