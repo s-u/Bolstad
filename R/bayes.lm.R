@@ -7,7 +7,7 @@
 #' 
 #' @param formula an object of class \code{\link[stats]{formula}} (or one that can be coerced to that class): a symbolic 
 #' description of the model to be fitted. The details of model specification are given under `Details'.
-#' @param data an optional data frame, list or environment (or object coercible by \code{\link[stats]{as.data.frame}} to a 
+#' @param data an optional data frame, list or environment (or object coercible by \code{\link[base]{as.data.frame}} to a 
 #' data frame) containing the variables in the model. If not found in data, the variables are taken 
 #' from \code{environment(formula)}, typically the environment from which \code{bayes.lm} is called.
 #' @param subset an optional vector specifying a subset of observations to be used in the fitting process.
