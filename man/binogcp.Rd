@@ -69,7 +69,7 @@ plot(myCdf, type = "l", xlab = expression(pi[0]),
 	   ylab = expression(Pr(pi <= pi[0])))
 
 ## use the quantile function to find the 95\% credible region.
-qtls = quantile(result, probs = c(0.025, 0.975))
+qtls = quantile(results, probs = c(0.025, 0.975))
 cat(paste("Approximate 95\% credible interval : ["
 	, round(qtls[1], 4), " ", round(qtls, 4), "]\\n", sep = ""))
 

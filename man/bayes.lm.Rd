@@ -11,7 +11,7 @@ bayes.lm(formula, data, subset, na.action, model = TRUE, x = FALSE,
 \item{formula}{an object of class \code{\link[stats]{formula}} (or one that can be coerced to that class): a symbolic 
 description of the model to be fitted. The details of model specification are given under `Details'.}
 
-\item{data}{an optional data frame, list or environment (or object coercible by \code{\link[stats]{as.data.frame}} to a 
+\item{data}{an optional data frame, list or environment (or object coercible by \code{\link[base]{as.data.frame}} to a 
 data frame) containing the variables in the model. If not found in data, the variables are taken 
 from \code{environment(formula)}, typically the environment from which \code{bayes.lm} is called.}
 
@@ -27,31 +27,33 @@ default is set by the \code{\link[stats]{na.action}} setting of options, and is 
 \eqn{\beta}{beta}. This argument is ignored for a flat prior.}
 
 \item{center}{logical or numeric. If \code{TRUE} then the covariates will be centered on their means to make them
-orthoganal to the intercept. This probably makes no sense for models with factors, and if the argument
+orthogonal to the intercept. This probably makes no sense for models with factors, and if the argument
 is numeric then it contains a vector of covariate indices to be centered (not implemented yet).}
+
+\item{prior}{A list containing b0 (A vector of prior coefficients) and V0 (A prior covariance matrix)}
 }
 \value{
-\code{bayes.lm} returns an object of class \code{c("Bolstad.lm", "lm")}.
-The functions \code{summary} and \code{link[stats]{anova}} are used to obtain and print a 
-summary and analysis of variance table of the results. The generic accessor functions \code{coefficients, effects, fitted.values and residuals}
+\code{bayes.lm} returns an object of class \code{Bolstad}.
+The \code{summary} function is used to obtain and print a summary of the results much like the usual 
+summary from a linear regression using \code{\link[stats]{lm}}.
+The generic accessor functions \code{coef, fitted.values and residuals}
 extract various useful features of the value returned by \code{bayes.lm}. Note that the residuals
 are computed at the posterior mean values of the coefficients.
 
-
-An object of class "lm" is a list containing at least the following components:
-\item{coefficients	} a named vector of coefficients which contains the posterior mean
-\item{post.var} a matrix containing the posterior variance-covariance matrix of the coefficients
-\item{post.sd} sigma.
-\item{residuals} the residuals, that is response minus fitted values (computed at the posterior mean).
-\item{fitted.values} the fitted mean values (computed at the posterior mean).
-\item{df.residual} the residual degrees of freedom.
-\item{call} the matched call.
-\item{terms} the \code{\link[stats]{terms}} object used.
-\item{y} if requested, the response used.
-\item{x} if requested, the model matrix used.
-\item{model} if requested (the default), the model frame used.
-\item{na.action} (where relevant) information returned by \code{model.frame} on the special 
-handling of \code{NA}s.
+An object of class "Bolstad" from this function is a list containing at least the following components:
+\item{coefficients}{a named vector of coefficients which contains the posterior mean}
+\item{post.var}{a matrix containing the posterior variance-covariance matrix of the coefficients}
+\item{post.sd}{sigma}
+\item{residuals}{the residuals, that is response minus fitted values (computed at the posterior mean)}
+\item{fitted.values}{the fitted mean values (computed at the posterior mean)}
+\item{df.residual}{the residual degrees of freedom}
+\item{call}{the matched call}
+\item{terms}{the \code{\link[stats]{terms}} object used}
+\item{y}{if requested, the response used}
+\item{x}{if requested, the model matrix used}
+\item{model}{if requested (the default), the model frame used}
+\item{na.action}{(where relevant) information returned by \code{model.frame} on the special 
+handling of \code{NA}s}
 }
 \description{
 bayes.lm is used to fit linear models in the Bayesian paradigm. It can be used to carry out regression, 
@@ -84,37 +86,33 @@ Models for \code{bayes.lm} are specified symbolically. A typical model has the f
    then in the environment of formula.
 }
 \examples{
+data(bears)
+bears = subset(bears, Obs.No==1)
+bears = bears[,-c(1,2,3,11,12)]
+bears = bears[ ,c(7, 1:6)]
+bears$Sex = bears$Sex - 1
+log.bears = data.frame(log.Weight = log(bears$Weight), bears[,2:7])
 
-## generate some data from a known model, where the true value of the
-## intercept alpha is 2, the true value of the slope beta is 3, and the
-## errors come from a normal(0,1) distribution
-x = rnorm(50)
-y = 22+3*x+rnorm(50)
+b0 = rep(0, 7)
+V0 = diag(rep(1e6,7))
 
-## use the function with a flat prior for the slope beta and a
-## flat prior for the intercept, alpha_xbar.
+fit = bayes.lm(log(Weight)~Sex+Head.L+Head.W+Neck.G+Length+Chest.G, data = bears,
+               prior = list(b0 = b0, V0 = V0))
+summary(fit)
+print(fit)
 
-bayes.lin.reg(y,x)
 
-## use the function with a normal(0,3) prior for the slope beta and a
-## normal(30,10) prior for the intercept, alpha_xbar.
+## Dobson (1990) Page 9: Plant Weight Data:
+ctl <- c(4.17,5.58,5.18,6.11,4.50,4.61,5.17,4.53,5.33,5.14)
+trt <- c(4.81,4.17,4.41,3.59,5.87,3.83,6.03,4.89,4.32,4.69)
+group <- gl(2, 10, 20, labels = c("Ctl","Trt"))
+weight <- c(ctl, trt)
 
-bayes.lin.reg(y,x,"n","n",0,3,30,10)
+lm.D9 <- lm(weight ~ group)
+bayes.D9 <- bayes.lm(weight ~ group)
 
-## use the same data but plot it and the credible interval
-
-bayes.lin.reg(y,x,"n","n",0,3,30,10, plot.data = TRUE)
-
-## The heart rate vs. O2 uptake example 14.1
-O2 = c(0.47,0.75,0.83,0.98,1.18,1.29,1.40,1.60,1.75,1.90,2.23)
-HR = c(94,96,94,95,104,106,108,113,115,121,131)
-plot(HR,O2,xlab="Heart Rate",ylab="Oxygen uptake (Percent)")
-
-bayes.lin.reg(y,x,"n","f",0,1,sigma=0.13)
-
-## Repeat the example but obtain predictions for HR = 100 and 110
-
-bayes.lin.reg(y,x,"n","f",0,1,sigma=0.13,pred.x=c(100,110))
+summary(lm.D9)
+summary(bayes.D9)
 
 }
 \keyword{misc}

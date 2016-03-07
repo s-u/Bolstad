@@ -9,8 +9,6 @@
 \arguments{
 \item{x}{an object of class \code{Bolstad}}
 
-\item{probs}{numeric vector of probabilities with values in \eqn{[0,1]}.}
-
 \item{\dots, }{any extra arguments needed.}
 }
 \description{

@@ -2,9 +2,12 @@
 % Please edit documentation in R/cdf.R
 \name{cdf}
 \alias{cdf}
+\alias{cdf.Bolstad}
 \title{Cumulative distribution function generic}
 \usage{
 cdf(x, ...)
+
+\method{cdf}{Bolstad}(x, ...)
 }
 \arguments{
 \item{x}{An object for which we want to compute the cdf}
@@ -21,6 +24,10 @@ This function returns the cumulative distribution function (cdf) of the
 posterior distribution of the parameter interest over the range of values for
 which the posterior is specified.
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{Bolstad}: Cumulative distribution function for Bayesian statistics
+}}
 \author{
 James Curran
 }

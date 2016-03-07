@@ -29,6 +29,16 @@ or \code{"topleft"}}
 \item{scaleLike}{If \code{TRUE}, then the likelihood will be scaled to have
 approximately the same maximum value as the posterior}
 
+\item{xlab}{Label for x axis}
+
+\item{ylab}{Label for y axis}
+
+\item{main}{Title of plot}
+
+\item{ylim}{Vector giving y coordinate range}
+
+\item{cex}{Character expansion multiplier}
+
 \item{\dots}{Any remaining arguments are fed to the \code{plot} command}
 }
 \description{

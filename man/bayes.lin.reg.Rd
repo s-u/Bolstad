@@ -93,11 +93,11 @@ O2 = c(0.47,0.75,0.83,0.98,1.18,1.29,1.40,1.60,1.75,1.90,2.23)
 HR = c(94,96,94,95,104,106,108,113,115,121,131)
 plot(HR,O2,xlab="Heart Rate",ylab="Oxygen uptake (Percent)")
 
-bayes.lin.reg(y,x,"n","f",0,1,sigma=0.13)
+bayes.lin.reg(O2,HR,"n","f",0,1,sigma=0.13)
 
 ## Repeat the example but obtain predictions for HR = 100 and 110
 
-bayes.lin.reg(y,x,"n","f",0,1,sigma=0.13,pred.x=c(100,110))
+bayes.lin.reg(O2,HR,"n","f",0,1,sigma=0.13,pred.x=c(100,110))
 
 }
 \keyword{misc}

@@ -9,6 +9,8 @@ bayes.t.test(x, ...)
 \arguments{
 \item{x}{a (non-empty) numeric vector of data values.}
 
+\item{...}{any additional arguments}
+
 \item{y}{an optional (non-empty) numeric vector of data values.}
 
 \item{alternative}{a character string specifying the alternative hypothesis, must be one of 
@@ -80,7 +82,7 @@ bayes.t.test(1:10, y = c(7:20))      # P = .3.691e-01
 ## we're saying the true difference of the means is between [-25.7, 25.7]
 ## with probability equal to 0.99. The median value for the prior on sigma is 2
 ## and we're using a scaled inverse chi-squared prior with 1 degree of freedom
-bayes.t.test(1:10, y = c(7:20), var.equal = T, prior = "joint.conj", 
+bayes.t.test(1:10, y = c(7:20), var.equal = TRUE, prior = "joint.conj", 
              m = c(0,0), n0 =  rep(0.01, 2), sig.med = 2)
 
 ##' Same example but with a large outlier. Note the assumption of equal variances isn't sensible

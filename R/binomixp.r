@@ -41,7 +41,7 @@
 #' ## 4 successes observed in 12 trials with a 90:10 non uniform beta(3,3) prior
 #' ## and a non uniform beta(4,12).
 #' ## Plot the stored prior, likelihood and posterior
-#' results = binomixp(4,12,c(3,3),c(4,12),0.9)
+#' results = binomixp(4,12,c(3,3),c(4,12),0.9)$mix
 #' 
 #' par(mfrow=c(3,1))
 #' y.lims = c(0,1.1*max(results$posterior,results$prior))
