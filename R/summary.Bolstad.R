@@ -14,20 +14,24 @@
 #' @export
 
 summary.Bolstad = function(object, ...) {
-  getTermLabels = function(x) 
-    attr(x$terms, "term.labels")
-  
-  z = object
-  
-  ans = list(rank = z$rank,
-             call = z$call,
-             terms = c("(Intercept)", getTermLabels(z)),
-             coef = z$coefficients,
-             std.err = diag(z$post.var),
-             prior = z$prior,
-             residuals = as.vector(z$residuals),
-             res.df = z$df.residual, ...)
-  class(ans) = "summary.Bolstad"
-  ans
+  if(length(class(object)) == 2 && all(grepl("Bolstad|lm", class(object)))){
+    
+    getTermLabels = function(x){ attr(x$terms, "term.labels") }
+    
+    z = object
+    
+    ans = list(rank = z$rank,
+               call = z$call,
+               terms = c("(Intercept)", getTermLabels(z)),
+               coef = z$coefficients,
+               std.err = diag(z$post.var),
+               prior = z$prior,
+               residuals = as.vector(z$residuals),
+               res.df = z$df.residual, ...)
+    class(ans) = "summary.Bolstad"
+    ans
+  }else{
+    summary.default(object, ...)
+  } 
 }
 

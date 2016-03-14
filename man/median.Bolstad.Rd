@@ -2,17 +2,21 @@
 % Please edit documentation in R/median.Bolstad.R
 \name{median.Bolstad}
 \alias{median.Bolstad}
-\title{Compute the posterior median}
+\title{Median generic}
 \usage{
-\method{median}{Bolstad}(x, ...)
+\method{median}{Bolstad}(x, na.rm = FALSE)
 }
 \arguments{
-\item{x}{an object of class \code{Bolstad}.}
+\item{x}{an object.}
 
-\item{\dots}{currently ignored}
+\item{na.rm}{Ideally if \code{TRUE} then missing values will be removed, but not currently used}
 }
 \description{
-Compute the posterior median
+Median generic
+}
+\details{
+If \code{x} is an object of class \code{Bolstad} then the posterior 
+  median of the parameter of interest will be calculated.
 }
 \author{
 James Curran

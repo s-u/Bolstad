@@ -11,6 +11,8 @@
 #' deviation of your precise prior.
 #' @param prior1 the vector of length 2 which contains the means and standard
 #' deviation of your vague prior.
+#' @param mu a vector of prior possibilities for the mean. If it is \code{NULL},
+#' then a vector centered on the sample mean is created.
 #' @param n.mu the number of possible \eqn{\mu}{mu} values in the prior.
 #' @param p the mixing proportion for the two component normal priors.
 #' @param plot if \code{TRUE} then a plot showing the prior and the posterior

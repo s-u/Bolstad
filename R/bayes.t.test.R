@@ -74,7 +74,7 @@ bayes.t.test = function(x,  ...){
   UseMethod("bayes.t.test")
 }
 
-#' @method bayes.t.test default
+#' @describeIn bayes.t.test Bayesian t-test
 #' @export
 bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less", "greater"),
        mu = 0, paired = FALSE, var.equal = TRUE,
@@ -291,7 +291,7 @@ bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less"
   return(rval)
 }
 
-#' @method bayes.t.test formula
+#' @describeIn bayes.t.test Bayesian t-test
 #' @export
 bayes.t.test.formula = function(formula, data, subset, na.action, ...){
   ## shamelessly hacked from t.test.formula

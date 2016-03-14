@@ -19,6 +19,9 @@ mean and known std. deviation.}
 this value is NULL, which it is by default, then a flat prior is used and
 m.x and s.x are ignored}
 
+\item{mu}{a vector of prior possibilities for the true mean. If this is \code{null},
+then a set of values centered on the sample mean is used.}
+
 \item{n.mu}{the number of possible \eqn{\mu}{mu} values in the prior}
 
 \item{plot}{if \code{TRUE} then a plot showing the prior and the posterior

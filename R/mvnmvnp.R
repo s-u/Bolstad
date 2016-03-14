@@ -21,7 +21,7 @@
 #' \item{cdf}{a function that will evaluation the posterior cdf at a given point. This function calls \code{mvtnmorm::pmvnorm}.}
 #' \item{quantile}{a function that will find quantiles from the posterior given input probabilities. This function calls \code{mvtnorm::qmvnorm}.}
 #' @keywords misc
-#' @export mvnmvnp
+#' @export 
 mvnmvnp = function(y, m0 = 0, V0 = 1, Sigma = NULL){
   
   yBar = matrix(colMeans(y), ncol = 1)
@@ -79,8 +79,8 @@ mvnmvnp = function(y, m0 = 0, V0 = 1, Sigma = NULL){
   results = list(parameter = 'mu',
                  mean = post.mean, 
                  var = post.var,
-                 cdf = function(x, ...)pmvnorm(x, post.mean, post.var, ...),
-                 quantileFun = function(probs, ...)qmvnorm(probs, post.mean, post.var, ...))
+                 cdf = function(x, ...)mvtnorm::pmvnorm(x, post.mean, post.var, ...),
+                 quantileFun = function(probs, ...)mvtnorm::qmvnorm(probs, post.mean, post.var, ...))
   
   class(results) = 'Bolstad'
   

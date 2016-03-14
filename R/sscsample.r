@@ -37,7 +37,7 @@
 #' res$means
 #' res$samples[,50]
 #' 
-#' @export sscsample
+#' @export
 sscsample  =  function (size, n.samples, sample.type = "simple",
                         x = NULL, strata = NULL,
                         cluster = NULL){
@@ -69,7 +69,7 @@ sscsample  =  function (size, n.samples, sample.type = "simple",
         return(stratum)
     }
 
-    #data(sscsample.data)
+    # data(sscsample.data)
     #sscsample.data = sscsample.data
 
     if (is.null(x))

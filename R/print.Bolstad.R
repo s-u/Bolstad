@@ -1,31 +1,35 @@
-#' Print method for objects of class \code{sscsample}
+#' Print method for objects of class \code{Bolstad}
 #' 
 #' This function provides a print summary method for the output of
-#' \code{sscsample}. The \code{sscsample} produces a large number of samples
-#' from a fixed population using either simple random, stratified, or cluster
-#' sampling. This function provides the means of each sample plus the number of
-#' observations from each ethnicity stratum in the sample.
+#' \code{bayes.lm}.
 #' 
 #' 
-#' @param x an object of class \code{sscsamp} produced by \code{sscsample}
+#' 
+#' @param x an object of class \code{Bolstad}
 #' @param digits number of digits to print 
-#' @param \dots any other arguments that are to be passed to \code{cat}
+#' @param \dots any other arguments that are to be passed to \code{print.default}
+#' @details if x has both class \code{Bolstad} and \code{lm} then a print method 
+#' similar to \code{print.lm} is called, otherwise \code{print.default} is called
 #' @author James Curran
-#' @seealso \code{\link{sscsample}}
+#' @seealso \code{\link{bayes.lm}}
 #' @export
 
 print.Bolstad = function(x, digits = max(3L, getOption("digits") - 3L), ...) {
-  getTermLabels = function(x) 
-    attr(x$terms, "term.labels")
-  
-  cat("\nCall:", paste0(deparse(x$call)), sep = "\n", collapse= "\n")
-  
-  if (length(coef(x))) {
-    cat("Coefficients:\n")
-    c = coef(x)
-    names(c) = c("(Intercept)", getTermLabels(x))
-    print(format(c, digits = digits), print.gap = 2L, quote = FALSE)
+  if(length(class(x)) == 2 && all(grepl("Bolstad|lm", class(x)))){
+    getTermLabels = function(x) 
+      attr(x$terms, "term.labels")
+    
+    cat("\nCall:", paste0(deparse(x$call)), sep = "\n", collapse= "\n")
+    
+    if (length(coef(x))) {
+      cat("Coefficients:\n")
+      c = coef(x)
+      names(c) = c("(Intercept)", getTermLabels(x))
+      print(format(c, digits = digits), print.gap = 2L, quote = FALSE)
+    }
+    cat("\n")
+  }else{
+    print.default(x, ...)
   }
-  cat("\n")
 }
 

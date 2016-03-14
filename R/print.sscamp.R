@@ -11,6 +11,7 @@
 #' @param \dots any other arguments that are to be passed to \code{cat}
 #' @author James Curran
 #' @seealso \code{\link{sscsample}}
+#' @export
 print.sscsamp = function(x, ...){
   cat("Sample   Mean    Stratum 1  Stratum 2  Stratum 3\n", ...)
   cat("------  -------  ---------  ---------  ---------\n", ...)

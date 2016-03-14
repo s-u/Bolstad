@@ -158,7 +158,7 @@ bayes.lm = function(formula, data, subset, na.action, model = TRUE, x = FALSE, y
     z$residuals = y - z$fitted.values
     z$df.residual = nrow(x) - ncol(x)
   }
-  class(z) = c("Bolstad")
+  class(z) = c("Bolstad", "lm")
   z$na.action = attr(mf, "na.action")
   z$call = cl
   z$terms = mt

@@ -2,7 +2,7 @@
 % Please edit documentation in R/quantile.Bolstad.R
 \name{quantile.Bolstad}
 \alias{quantile.Bolstad}
-\title{Compute quantiles from the posterior distribution}
+\title{Posterior quantiles}
 \usage{
 \method{quantile}{Bolstad}(x, probs = seq(0, 1, 0.25), ...)
 }
@@ -14,6 +14,11 @@
 \item{\dots, }{any extra arguments needed.}
 }
 \description{
-Compute quantiles from the posterior distribution
+Posterior quantiles
+}
+\details{
+If \code{x} is of class \code{Bolstad} then this will find the
+quantiles of the posterior distribution using numerical integration and
+linear interpolation if necessary.
 }
 

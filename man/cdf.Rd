@@ -26,7 +26,7 @@ which the posterior is specified.
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{Bolstad}: Cumulative distribution function for Bayesian statistics
+\item \code{Bolstad}: Cumulative distribution function for posterior density
 }}
 \author{
 James Curran

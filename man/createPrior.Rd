@@ -9,8 +9,7 @@ createPrior(x, ...)
 \arguments{
 \item{x}{a vector of x values at which the prior is to be specified (the support of the prior).}
 
-\item{wt}{a vector of weights corresponding to the weight of the prior at the
-given x values.}
+\item{\dots}{optional exta arguments. Not currently used.}
 }
 \value{
 a linear interpolation function where the weights have been scaled so

@@ -21,6 +21,9 @@ deviation of your vague prior.}
 
 \item{p}{the mixing proportion for the two component normal priors.}
 
+\item{mu}{a vector of prior possibilities for the mean. If it is \code{NULL},
+then a vector centered on the sample mean is created.}
+
 \item{n.mu}{the number of possible \eqn{\mu}{mu} values in the prior.}
 
 \item{plot}{if \code{TRUE} then a plot showing the prior and the posterior

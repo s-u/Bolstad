@@ -2,9 +2,18 @@
 % Please edit documentation in R/bayes.t.test.R
 \name{bayes.t.test}
 \alias{bayes.t.test}
+\alias{bayes.t.test.default}
+\alias{bayes.t.test.formula}
 \title{Bayesian t-Test}
 \usage{
 bayes.t.test(x, ...)
+
+\method{bayes.t.test}{default}(x, y = NULL, alternative = c("two.sided",
+  "less", "greater"), mu = 0, paired = FALSE, var.equal = TRUE,
+  conf.level = 0.95, prior = c("jeffreys", "joint.conj"), m = NULL,
+  n0 = NULL, sig.med = NULL, kappa = 1, ...)
+
+\method{bayes.t.test}{formula}(formula, data, subset, na.action, ...)
 }
 \arguments{
 \item{x}{a (non-empty) numeric vector of data values.}
@@ -73,6 +82,12 @@ A list with class "htest" containing the following components:
 \description{
 Performs one and two sample t-tests (in the Bayesian hypothesis testing framework) on vectors of data
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{default}: Bayesian t-test
+
+\item \code{formula}: Bayesian t-test
+}}
 \examples{
 bayes.t.test(1:10, y = c(7:20))      # P = .3.691e-01
 

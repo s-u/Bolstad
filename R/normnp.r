@@ -11,6 +11,8 @@
 #' @param sigma.x the population std. deviation of the normal distribution. If
 #' this value is NULL, which it is by default, then a flat prior is used and
 #' m.x and s.x are ignored
+#' @param mu a vector of prior possibilities for the true mean. If this is \code{null},
+#' then a set of values centered on the sample mean is used.
 #' @param n.mu the number of possible \eqn{\mu}{mu} values in the prior
 #' @param plot if \code{TRUE} then a plot showing the prior and the posterior
 #' will be produced.

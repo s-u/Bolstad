@@ -10,13 +10,13 @@
 #'   used, or a a \code{stats::splinefun} which will compute the lower
 #'   tail probability of the parameter for any valid input.
 #' @author James Curran
-#' @export cdf
+#' @export 
 cdf = function(x, ...){
   UseMethod("cdf")
 }
 
-#' @describeIn cdf Cumulative distribution function for Bayesian statistics
-#' @export cdf.Bolstad
+#' @describeIn cdf Cumulative distribution function for posterior density
+#' @export 
 #' 
 cdf.Bolstad = function(x, ...){
   if(class(x) != "Bolstad")
