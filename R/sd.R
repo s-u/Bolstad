@@ -1,22 +1,7 @@
-#'Standard deviation generic
+#' Posterior standard deviation
 #'
-#'@param x an object for which we want to compute the standard deviation.
-#'@param \dots Any additional arguments to be passed to \code{sd}.
-#'@export
-sd = function(x, ...)
-  UseMethod("sd")
-
-
-#' @describeIn sd
-#'  
-#'  Makes sure that the base \code{stats::sd} gets called for anything
-#'  other than an object of class \code{Bolstad}.
-#'  @method sd default
-#'  @export
-sd.default = function(x, ...){
-  stats::sd(x, ...)
-}
-
+#' @param x an object of class \code{Bolstad} for which we want to compute the standard deviation.
+#' @param \dots Any additional arguments to be passed to \code{sd}.
 #' @describeIn sd
 #'  
 #'  Calculate the posterior standard deviation of an object of class \code{Bolstad}. If the 
