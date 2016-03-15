@@ -22,6 +22,7 @@
 #' orthogonal to the intercept. This probably makes no sense for models with factors, and if the argument
 #' is numeric then it contains a vector of covariate indices to be centered (not implemented yet).
 #' @param prior A list containing b0 (A vector of prior coefficients) and V0 (A prior covariance matrix)
+#' @param sigma the population standard deviation of the errors. If \code{FALSE} then this is estimated from the residual sum of squares from the ML fit.
 #' 
 #' @details Models for \code{bayes.lm} are specified symbolically. A typical model has the form 
 #' \code{response ~ terms} where \code{response} is the (numeric) response vector and \code{terms} is a
@@ -102,7 +103,7 @@
 #' @export bayes.lm
 
 bayes.lm = function(formula, data, subset, na.action, model = TRUE, x = FALSE, y = FALSE,
-                    center = TRUE, prior = NULL){
+                    center = TRUE, prior = NULL, sigma = FALSE){
   ret.x = x
   ret.y = y
   cl = match.call()
@@ -138,7 +139,12 @@ bayes.lm = function(formula, data, subset, na.action, model = TRUE, x = FALSE, y
     z$prior = prior
     if(!is.null(prior)){
       prior.prec = solve(prior$V0)
-      resVar = sum(z$residuals^2) / z$df.residual
+      resVar = if(is.logical(sigma) && !sigma){
+        sum(z$residuals^2) / z$df.residual
+      }else{
+        sigma^2
+      }
+      
       ls.prec = solve(resVar * z$cov.unscaled)
       post.prec = prior.prec + ls.prec
       V1 = solve(post.prec)
@@ -148,7 +154,11 @@ bayes.lm = function(formula, data, subset, na.action, model = TRUE, x = FALSE, y
       z$post.sd = sqrt(resVar)
       
     }else{
-      resVar = sum(z$residuals^2) / z$df.residual
+      resVar = if(is.logical(sigma) && !sigma){
+        sum(z$residuals^2) / z$df.residual
+      }else{
+        sigma^2
+      }
       z$post.mean = z$coefficients
       z$post.var = resVar * z$cov.unscaled
       z$post.sd = sqrt(resVar)

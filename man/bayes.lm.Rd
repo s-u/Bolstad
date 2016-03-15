@@ -5,7 +5,7 @@
 \title{Bayesian inference for multiple linear regression}
 \usage{
 bayes.lm(formula, data, subset, na.action, model = TRUE, x = FALSE,
-  y = FALSE, center = TRUE, prior = NULL)
+  y = FALSE, center = TRUE, prior = NULL, sigma = FALSE)
 }
 \arguments{
 \item{formula}{an object of class \code{\link[stats]{formula}} (or one that can be coerced to that class): a symbolic 
@@ -31,6 +31,8 @@ orthogonal to the intercept. This probably makes no sense for models with factor
 is numeric then it contains a vector of covariate indices to be centered (not implemented yet).}
 
 \item{prior}{A list containing b0 (A vector of prior coefficients) and V0 (A prior covariance matrix)}
+
+\item{sigma}{the population standard deviation of the errors. If \code{FALSE} then this is estimated from the residual sum of squares from the ML fit.}
 }
 \value{
 \code{bayes.lm} returns an object of class \code{Bolstad}.
