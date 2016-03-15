@@ -1,8 +1,16 @@
-#' Posterior variance
+#' Variance generic
 #'
 #' @param x an object for which we want to compute the variance
 #' @param \dots Any additional arguments to be passed to \code{var}.
 #' @importFrom stats var
+#' @export
+var = function(x, ...){
+  UseMethod("var")
+}
+#' @export
+var.default = function(x, ...){
+  stats::var(x, ...)
+}
 #' @export
 var.Bolstad = function(x, ...){
   if(any(grepl("var", names(x))))
