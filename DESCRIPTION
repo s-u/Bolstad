@@ -1,6 +1,6 @@
 Package: Bolstad
-Version: 0.2-29
-Date: 2016-03-15
+Version: 0.2-30
+Date: 2016-03-17
 Title: Functions for Elementary Bayesian Inference
 Author: James Curran <j.curran@auckland.ac.nz>
 Maintainer: James Curran <j.curran@auckland.ac.nz>
@@ -8,7 +8,7 @@ Description: A set of R functions and data sets for the book Introduction to
     Bayesian Statistics, Bolstad, W.M. (2007), John Wiley & Sons ISBN 0-471-27020-2.
 License: GPL (>= 2)
 LazyData: true
-Depends: R (>= 2.10), stats
+Depends: R (>= 3.2.4)
 Imports:
   mvtnorm
 RoxygenNote: 5.0.1
