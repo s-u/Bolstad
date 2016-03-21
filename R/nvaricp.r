@@ -12,9 +12,10 @@
 #' @param S0 the prior scaling factor.
 #' @param kappa the degrees of freedom of the prior.
 #' @param cred.int if TRUE then a 100(1-alpha) percent credible interval will
-#' be calculated for \eqn{\sigma}{sigma}
+#' be calculated for \eqn{\sigma}{sigma}. This argument is deprecated and will be removed in
+#' a future release.
 #' @param alpha controls the width of the credible interval. Ignored if
-#' cred.int is FALSE
+#' cred.int is FALSE. This argument is deprecated and will be removed in a future release
 #' @param plot if \code{TRUE} then a plot showing the prior and the posterior
 #' will be produced.
 #' @return A list will be returned with the following components:
@@ -214,7 +215,8 @@ nvaricp = function(y, mu, S0, kappa, cred.int = FALSE, alpha = 0.05, plot = TRUE
   results = list(param.x = sigma, prior = prior, likelihood = likelihood,
                  posterior = posterior, 
                  sigma = sigma, # for backwards compat. only
-                 S1 = S1, kappa1 = kappa1)
+                 S1 = S1, kappa1 = kappa1
+                 mean = )
   class(results) = 'Bolstad'
   invisible(results)
 }
