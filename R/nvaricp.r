@@ -11,11 +11,6 @@
 #' @param mu the known population mean of the random sample.
 #' @param S0 the prior scaling factor.
 #' @param kappa the degrees of freedom of the prior.
-#' @param cred.int if TRUE then a 100(1-alpha) percent credible interval will
-#' be calculated for \eqn{\sigma}{sigma}. This argument is deprecated and will be removed in
-#' a future release.
-#' @param alpha controls the width of the credible interval. Ignored if
-#' cred.int is FALSE. This argument is deprecated and will be removed in a future release
 #' @param plot if \code{TRUE} then a plot showing the prior and the posterior
 #' will be produced.
 #' @return A list will be returned with the following components:
@@ -64,7 +59,18 @@
 #' 
 #' 
 #' @export nvaricp
-nvaricp = function(y, mu, S0, kappa, cred.int = FALSE, alpha = 0.05, plot = TRUE){
+nvaricp = function(y, mu, S0, kappa, plot = TRUE, ...){
+  
+  dots = list(...)
+  cred.int = dots[[pmatch("cred.int", names(dots))]]
+  alpha = dots[[pmatch("alpha", names(dots))]]
+  
+  if(is.null(cred.int))
+    cred.int = FALSE
+  
+  if(is.null(alpha))
+    alpha = 0.05
+  
   n = length(y)
   SST = sum((y-mu)^2)
 
@@ -187,6 +193,10 @@ nvaricp = function(y, mu, S0, kappa, cred.int = FALSE, alpha = 0.05, plot = TRUE
   cat(paste("S1: ",signif(S1,4)," kappa1 :", signif(kappa1,3),"\n",sep = ""))
 
   if(cred.int){
+    msg = paste0("This argument is deprecated and will not be supported in future releases.",
+                 "\nPlease use the quantile function instead.\n")
+    warning(msg)
+    
     if(kappa1<2)
       cat("Unable to calculate credible interval for sigma if kappa1<= 2\n")
     else{
@@ -215,15 +225,18 @@ nvaricp = function(y, mu, S0, kappa, cred.int = FALSE, alpha = 0.05, plot = TRUE
   results = list(param.x = sigma, prior = prior, likelihood = likelihood,
                  posterior = posterior, 
                  sigma = sigma, # for backwards compat. only
-                 S1 = S1, kappa1 = kappa1
+                 S1 = S1, kappa1 = kappa1,
                  mean = ifelse(kappa1 > 2, S1 / (kappa1 - 2), NA),
+                 median = S1 / qchisq(0.5, kappa1),
                  var = ifelse(kappa1 > 2, S1 / (kappa1 - 2), NA),
                  sd = sqrt(ifelse(kappa1 > 2, S1 / (kappa1 - 2), NA)),
                  cdf = function(y, ...){
                    pchisq(y, kappa1, ...)
+                 },
+                 quantile = function(probs, ...){
+                   S1 / qchisq(p = probs, ...)
                  }
-                 
-                 median = )
+                 )
   class(results) = 'Bolstad'
   invisible(results)
 }
