@@ -40,7 +40,6 @@
 #' ## interval for sigma. NOTE this method has changed
 #' results = nvaricp(y,200,29.11,1)
 #' quantile(results, probs = c(0.025, 0.975))
-#' 
 #' @export nvaricp
 nvaricp = function(y, mu, S0, kappa, plot = TRUE, ...){
   
@@ -88,14 +87,14 @@ nvaricp = function(y, mu, S0, kappa, plot = TRUE, ...){
     k2 = S1/k1
     k3 = sqrt(k2)
 
-    plot(sigma, prior, type = "l", col = "blue", ylim = c(0, 1.1 * y.max),
-         xlim = c(0,k3),
-         main = expression(
-             paste("Shape of Inverse ", chi^2," and posterior for ",
-                   sigma, sep = "")),
-         xlab = expression(sigma),
-         ylab = "Density")
-    lines(sigma, posterior, lty = 2, col = "red")
+    if(plot){
+      plot(sigma, prior, type = "l", col = "blue", ylim = c(0, 1.1 * y.max), xlim = c(0,k3),
+           main = expression(paste("Shape of Inverse ", chi^2," and posterior for ", sigma, sep = "")),
+           xlab = expression(sigma),
+           ylab = "Density")
+      lines(sigma, posterior, lty = 1, col = "red")
+      legend("topleft", lty = 1, lwd = 2, col = c("blue","red"), legend = c("Prior", "Posterior"), bty = "n")
+    }
   }else if(kappa == 0){                   ## Jeffrey's prior
     S = 0
     S1 = S+SST
@@ -126,12 +125,10 @@ nvaricp = function(y, mu, S0, kappa, plot = TRUE, ...){
     k4 = 1.2*max(posterior)
 
     if(plot){
-      plot(sigma,prior,type = "l",col = "blue", ylim = c(0,k4),
-           main = expression(paste("Shape of prior and posterior for ", sigma,
-               sep = "")),
-           xlab = expression(sigma),ylab = "Density")
-      lines(sigma,posterior,lty = 2,col = "red")
-      }
+      plot(sigma, prior, type = "l",col = "blue", ylim = c(0,k4), main = expression(paste("Shape of prior and posterior for ", sigma, sep = "")), xlab = expression(sigma),ylab = "Density")
+      lines(sigma, posterior, col = "red")
+      legend("topleft", lty = 1, lwd = 2, col = c("blue","red"), legend = c("Prior", "Posterior"), bty = "n")
+    }
   }else if(kappa<0){
     S0 = 0
     S1 = S0+SST
@@ -163,14 +160,12 @@ nvaricp = function(y, mu, S0, kappa, plot = TRUE, ...){
     k4 = 1.2*max(posterior)
 
     if(plot){
-      plot(sigma,prior,type = "l",col = "blue", xlim = c(0,k3),ylim = c(0,k4),
-           main = expression(paste("Shape of prior and posterior for ", sigma,
-               sep = "")),
+      plot(sigma, prior, type = "l",col = "blue", xlim = c(0,k3),ylim = c(0,k4),
+           main = expression(paste("Shape of prior and posterior for ", sigma, sep = "")),
            xlab = expression(sigma),ylab = "Density")
-      lines(sigma,posterior,lty = 2,col = "red")
-      legend(sigma[1],0.9*k4,lty = 1:2,col = c("blue","red")
-             ,legend = c("Prior","Posterior"))
-      }
+      lines(sigma, posterior, col = "red")
+      legend("topleft", lty = 1, lwd = 2, col = c("blue","red"), legend = c("Prior", "Posterior"), bty = "n")
+    }
   }
 
   cat(paste("S1: ",signif(S1,4)," kappa1 :", signif(kappa1,3),"\n",sep = ""))
@@ -188,19 +183,17 @@ nvaricp = function(y, mu, S0, kappa, plot = TRUE, ...){
                 signif(sigmahat.post.mean,4),"\n",sep = ""))
     }
 
-    q50 = qchisq(0.5,kappa1)
+    q50 = qchisq(p = 0.5, df = kappa1)
     sigmahat.post.median = sqrt(S1/q50)
     cat(paste("Estimate of sigma using posterior median: ",
               signif(sigmahat.post.median,4),"\n",sep = ""))
 
-    cdf = sintegral(sigma,posterior)$cdf
-    Finv = approxfun(cdf$y,cdf$x)
-    lb = Finv(alpha/2)
-    ub = Finv(1-alpha/2)
-    cat(paste(round(100*(1-alpha)),"% credible interval for sigma: [",
-              signif(lb,4),", ", signif(ub,4),"]\n",sep = ""))
+    ci = sqrt(S1 / qchisq(p = 1 - c(alpha * 0.5, 1 - alpha * 0.5), df = kappa1))
+    ciStr = sprintf("%d%% credible interval for sigma: [%4g, %4g]\n", round(100 * (1 - alpha)), signif(ci[1], 4), signif(ci[2], 4))
+    cat(ciStr)
+    
     if(plot)
-      abline(v = c(lb,ub),col = "blue",lty = 3)
+      abline(v = ci, col = "blue", lty = 3)
 
   }
 
@@ -209,15 +202,15 @@ nvaricp = function(y, mu, S0, kappa, plot = TRUE, ...){
                  posterior = posterior, 
                  sigma = sigma, # for backwards compat. only
                  S1 = S1, kappa1 = kappa1,
-                 mean = ifelse(kappa1 > 2, S1 / (kappa1 - 2), NA),
-                 median = S1 / qchisq(0.5, kappa1),
-                 var = ifelse(kappa1 > 2, S1 / (kappa1 - 2), NA),
-                 sd = sqrt(ifelse(kappa1 > 2, S1 / (kappa1 - 2), NA)),
+                 mean = ifelse(kappa1 > 2, sqrt(S1 / (kappa1 - 2)), NA),
+                 median = sqrt(S1 / qchisq(0.5, kappa1)),
+                 var = ifelse(kappa1 > 4, 2 * S1^2 / ((kappa1 - 2)^2 * (kappa1 - 4)), NA),
+                 sd = sqrt(ifelse(kappa1 > 4, 2 * S1^2 / ((kappa1 - 2)^2 * (kappa1 - 4)), NA)),
                  cdf = function(y, ...){
-                   pchisq(y, kappa1, ...)
+                   pchisq(S1 / y^2, kappa1, ...)
                  },
                  quantile = function(probs, ...){
-                   S1 / qchisq(p = probs, ...)
+                   sqrt(S1 / qchisq(p = 1 - probs, ...))
                  }
                  )
   class(results) = 'Bolstad'
