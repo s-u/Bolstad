@@ -216,7 +216,14 @@ nvaricp = function(y, mu, S0, kappa, cred.int = FALSE, alpha = 0.05, plot = TRUE
                  posterior = posterior, 
                  sigma = sigma, # for backwards compat. only
                  S1 = S1, kappa1 = kappa1
-                 mean = )
+                 mean = ifelse(kappa1 > 2, S1 / (kappa1 - 2), NA),
+                 var = ifelse(kappa1 > 2, S1 / (kappa1 - 2), NA),
+                 sd = sqrt(ifelse(kappa1 > 2, S1 / (kappa1 - 2), NA)),
+                 cdf = function(y, ...){
+                   pchisq(y, kappa1, ...)
+                 }
+                 
+                 median = )
   class(results) = 'Bolstad'
   invisible(results)
 }
