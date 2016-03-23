@@ -209,7 +209,7 @@ nvaricp = function(y, mu, S0, kappa, plot = TRUE, ...){
                  cdf = function(y, ...){
                    pchisq(S1 / y^2, kappa1, ...)
                  },
-                 quantile = function(probs, ...){
+                 quantileFun = function(probs, ...){
                    sqrt(S1 / qchisq(p = 1 - probs, ...))
                  }
                  )

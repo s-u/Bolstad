@@ -94,7 +94,7 @@ binobp = function(x, n, a = 1, b = 1, pi = seq(0.01, 0.999, by = 0.001), plot = 
   results = list(name = 'pi', param.x = pi, prior = prior, likelihood = likelihood, posterior = posterior,
                  pi = pi, # for backwards compat. only
                  mean = m1, var = v1, sd = s1, quantiles = qtls,
-                 cdf = function(y,...){dbeta(y, shape1 = a + x, shape2 = b + n - x, ...)},
+                 cdf = function(y,...){pbeta(y, shape1 = a + x, shape2 = b + n - x, ...)},
                  quantileFun = function(probs, ...){
                    qbeta(probs, shape1 = a + x, shape2 = b + n - x, ...)})
   
