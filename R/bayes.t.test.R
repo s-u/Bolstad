@@ -10,7 +10,8 @@
 #' @param paired a logical indicating whether you want a paired t-test.
 #' @param var.equal a logical variable indicating whether to treat the two variances as being equal. 
 #' If \code{TRUE} (default) then the pooled variance is used to estimate the variance otherwise the 
-#' Welch (or Satterthwaite) approximation to the degrees of freedom is used. The unequal variance case is not yet implented.
+#' Welch (or Satterthwaite) approximation to the degrees of freedom is used. The unequal variance case is
+#' implented using Gibbs sampling.
 #' @param conf.level confidence level of interval.
 #' @param prior a character string indicating which prior should be used for the means, must be one of
 #' \code{"jeffreys"} (default) for independent Jeffreys' priors on the unknown mean(s) and variance(s), 
@@ -27,6 +28,14 @@
 #' @param kappa if the joint conjugate prior is used then the user must specify the degrees of freedom
 #' for the inverse chi-squared distribution used for the unknown standard deviation. Usually the default
 #' of 1 will be sufficient. This parameter is not used if the user chooses a Jeffreys' prior.
+#' @param sigmaPrior If a two-sample t-test with unequal variances is desired then the user must choose between
+#' using an chi-squared prior ("chisq") or a gamma prior ("gamma") for the unknown population standard deviations.
+#' This parameter is only used if \code{var.equal} is set to \code{FALSE}.
+#' @param nIter Gibbs sampling is used when a two-sample t-test with unequal variances is desired.
+#' This parameter controls the sample size from the posterior distribution.
+#' @param nBurn Gibbs sampling is used when a two-sample t-test with unequal variances is desired.
+#' This parameter controls the number of iterations used to burn in the chains before the procedure 
+#' starts sampling in order to reduce correlation with the starting values. 
 #' @param formula a formula of the form \code{lhs ~ rhs} where lhs is a numeric variable giving the data values and rhs a factor with two 
 #' levels giving the corresponding groups.
 #' @param data an optional matrix or data frame (or similar: see \code{\link{model.frame}}) containing 
@@ -79,7 +88,8 @@ bayes.t.test = function(x,  ...){
 bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less", "greater"),
        mu = 0, paired = FALSE, var.equal = TRUE,
        conf.level = 0.95, prior = c("jeffreys", "joint.conj"), 
-       m = NULL, n0 = NULL, sig.med = NULL, kappa = 1, ...){
+       m = NULL, n0 = NULL, sig.med = NULL, kappa = 1, 
+       sigmaPrior = "chisq", nIter = 10000, nBurn = 1000, ...){
   
   prior = match.arg(prior)
   
@@ -206,7 +216,7 @@ bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less"
     SSp = sum((x - mx)^2) + sum((y - my)^2)
     
     method = paste(if (!var.equal) 
-      "Welch", "Two Sample t-test")
+      "Gibbs", "Two Sample t-test")
     
     estimate = c(mx, my)
     names(estimate) = c("mean of x", "mean of y")
@@ -215,6 +225,9 @@ bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less"
     ub = mx - my + 4 * sqrt(vx/nx + vy/ny)
     param.x = seq(lb, ub, length = 1000)
     name = 'mu[1]-mu[2]'
+    gibbsTstat = NULL
+    gibbsCdf = NULL
+    gibbsQtl = NULL
     
     if (var.equal) {
       if(prior == "jeffreys"){
@@ -247,7 +260,18 @@ bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less"
         posterior = dt((param.x - mpost)/se.post, df)
       }
     }else {
-     
+      res = bayes.t.gibbs(x, y, nIter, nBurn, sigmaPrior)
+      se.post = sqrt(rowSums(res[,4:5]/c(nx,ny)))
+      likelihood = dnorm(mx - my, param.x, se.post)
+      posterior = density(res[,3])$y
+      mpost = mean(res[,3])
+      var = sd(res[,3])
+      gibbsTstat = mean(res$tstat)
+      gibbsQtl = function(probs, ...){quantile(res$mu.df, probs = probs, ...)}
+      d = density(res[,3])
+      posterior = density(res[,3])$y
+      Int = sintegral()
+      gibbsCdf = cdf
     }
   }
   
