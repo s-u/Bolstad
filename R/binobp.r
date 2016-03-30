@@ -87,8 +87,9 @@ binobp = function(x, n, a = 1, b = 1, pi = seq(0.01, 0.999, by = 0.001), plot = 
   
   cat("\nProb.\tQuantile \n")
   cat("------\t---------\n")
-  for(i in 1:length(probs))
-    cat(paste(round(probs[i],3),"\t",round(qtls[i],7),"\n",sep=""))
+  for(i in 1:length(probs)){
+    cat(sprintf("%5.3f\t%9.7f\n", round(probs[i],3),round(qtls[i],7)))
+  }
   
   
   results = list(name = 'pi', param.x = pi, prior = prior, likelihood = likelihood, posterior = posterior,
