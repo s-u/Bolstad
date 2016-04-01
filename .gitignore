@@ -2,5 +2,6 @@
 .Rhistory
 .RData
 Bolstad.Rproj
-man/*.Rd
-NAMESPACE
+src/man/*.Rd
+src/NAMESPACE
+.DS_Store
