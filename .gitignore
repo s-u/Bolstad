@@ -1,7 +1,6 @@
 .Rproj.user
 .Rhistory
 .RData
-Bolstad.Rproj
 src/man/*.Rd
 src/NAMESPACE
 .DS_Store

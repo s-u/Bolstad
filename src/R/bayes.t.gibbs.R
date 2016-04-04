@@ -1,84 +1,121 @@
 bayes.t.gibbs = function(x, y, nIter = 10000, nBurn = 1000, sigmaPrior = c("chisq", "gamma")){
   
   sigmaPrior = match.arg(sigmaPrior)
-  data = list(x, y)
-
+  nx = length(x)
+  ny = length(y)
+  xbar = mean(x)
+  ybar = mean(y)
+  Sx = nx * xbar
+  Sy = ny * ybar
+  SSx = sum((x - xbar)^2)
+  SSy = sum((y - ybar)^2)
+  
   if(sigmaPrior == "chisq"){
-    ybar = sapply(data, mean)
-    Sy = sapply(data, sum)
-    SSy = sapply(data, function(x)sum((x - mean(x))^2))
-    n = sapply(data, length)
+    ## prior mean
+    m0x = median(x)
+    m0y = median(y)
     
-    ## prior means and sds
-    m = m1 = ybar
-    s = s1 = rep(1, 2)
+    ## prior sd
+    s0x = sd(x)
+    s0y = sd(y)
     
-    post.prec = prior.prec = 1 / s^2
+    ##
+    S0x = s0x^2 * qchisq(0.5, 1)
+    S0y = s0y^2 * qchisq(0.5, 1)
+    
+    ## 
     kappa = 1
+    kappa1x = kappa + nx
+    kappa1y = kappa + ny
     
-    kappa1 = kappa + n
-    S1 = S = s^2*qchisq(0.5, 1)
+    N = nIter + nBurn
     
-    sigma.sq = S/rchisq(2, 1)
-    mu = rnorm(2, m, s)
+    sigma.sq.x = sigma.sq.y = mu.x = mu.y = rep(0, N)
     
-    res = matrix(0, nr = nIter, nc = 7)
+    ## draw the initial values
+    sigma.sq.x[1] = S0x / rchisq(1, kappa1x)
+    sigma.sq.y[1] = S0y / rchisq(1, kappa1y)
+    mu.x[1] = rnorm(1, m0x, s0x)
+    mu.y[1] = rnorm(1, m0y, s0y)
     
-    for(i in 1:(nIter + nBurn)){
-      for(j in 1:2){
-        S1[j] = S[j] + sum((data[[j]] - mu[j])^2)
-        sigma.sq[j] = S1[j] / rchisq(1, kappa1[j])
-        post.prec[j] = prior.prec[j] + n[j] / sigma.sq[j]
-        s1[j] = 1 / post.prec[j]
-        m1[j] = m[j] * prior.prec[j] / post.prec[j] + Sy[j] * s1[j] / sigma.sq[j]
-        mu[j] = rnorm(1, m1[j], sqrt(s1[j]))
-      }
-      if(i > nBurn){
-        d = mu[1] - mu[2]
-        se.diff = sqrt(sum(sigma.sq / n))
-        tstat = d / se.diff
-        res[i - nBurn,] = c(d, se.diff, mu, sigma.sq, tstat)
-      }
+    
+    for(i in 2:N){
+      S1x = S0x + sum((x - mu.x[i - 1])^2)
+      S1y = S0y + sum((y - mu.y[i - 1])^2)
+      
+      sigma.sq.x[i] = S1x / rchisq(1, kappa1x)
+      sigma.sq.y[i] = S1y / rchisq(1, kappa1y)
+      
+      s1x = 1 / sqrt(1 / s0x^2 + nx / sigma.sq.x[i]) 
+      s1y = 1 / sqrt(1 / s0y^2 + ny / sigma.sq.y[i])
+      
+      m1x = m0x * s1x^2  / s0x^2  + Sx * s1x^2 / sigma.sq.x[i] 
+      m1y= m0y * s1y^2  / s0y^2  + Sy * s1y^2 / sigma.sq.y[i]
+      
+      mu.x[i] = rnorm(1, m1x, s1x) 
+      mu.y[i] = rnorm(1, m1y, s1y) 
     }
+    
+    res = data.frame(mu.x = tail(mu.x, nIter),
+                     mu.y = tail(mu.y, nIter),
+                     mu.diff = tail(mu.x - mu.y, nIter),
+                     sigma.sq.x = tail(sigma.sq.x, nIter),
+                     sigma.sq.y = tail(sigma.sq.y, nIter),
+                     tstat = tail((mu.x - mu.y) / sqrt(sigma.sq.x / nx + sigma.sq.y / ny), nIter))
+    
   }else{
-    ybar = sapply(data, mean)
-    Sy = sapply(data, sum)
-    SSy = sapply(data, function(x)sum((x - mean(x))^2))
-    n = sapply(data, length)
-    
     ## prior means and sds
-    m = ybar
-    s = rep(sqrt(2), 2)
+    ## prior mean
+    m0x = median(x)
+    m0y = median(y)
     
-    prior.prec = 1 / s^2
-    alpha = c(0.001, 0.001)
-    beta = c(0.001, 0.001)
-    alpha1 = n / 2 + alpha
-    beta1 = beta + SSy / 2
+    ## prior sd
+    s0x = sd(x)
+    s0y = sd(y)
     
-    sigma.sq = 1/rgamma(2, alpha1, beta1)
-    mu = rnorm(2, m, s)
+    alpha0x = beta0x = alpha0y = beta0y = 0.001
     
-    res = matrix(0, nr = nIter, nc = 7)
+    alpha1x = nx / 2 + alpha0x
+    beta1x = beta0x + SSx / 2
     
-    for(i in 1:(nIter + nBurn)){
-      for(j in 1:2){
-        beta1[j] = beta[j] + sum((data[[j]] - mu[j])^2) / 2
-        sigma.sq[j] = 1 / rgamma(1, alpha1[j], beta1[j])
-        post.prec[j] = prior.prec[j] + n[j] / sigma.sq[j]
-        s1[j] = 1 / post.prec[j]
-        m1[j] = m[j] * prior.prec[j] / post.prec[j] + Sy[j] * s1[j] / sigma.sq[j]
-        mu[j] = rnorm(1, m1[j], sqrt(s1[j]))
-      }
-      if(i > nBurn){
-        d = mu[1] - mu[2]
-        se.diff = sqrt(sum(sigma.sq / n))
-        tstat = d / se.diff
-        res[i - nBurn,] = c(d, se.diff, mu, sigma.sq, tstat)
-      }
+    alpha1y = ny / 2 + alpha0y
+    beta1y = beta0y + SSy / 2
+    
+    N = nIter + nBurn
+    
+    sigma.sq.x = sigma.sq.y = mu.x = mu.y = rep(0, N)
+    
+    ## draw the initial values
+    sigma.sq.x[1] = 1/rgamma(1, alpha1x, beta1x)
+    sigma.sq.y[1] = 1/rgamma(1, alpha1y, beta1y)
+    
+    mu.x[1] = rnorm(1, m0x, s0x)
+    mu.y[1] = rnorm(1, m0y, s0y)
+
+    for(i in 2:N){
+      beta1x = beta0x + sum((x - mu.x[i - 1])^2) * 0.5
+      sigma.sq.x[i] = 1 / rgamma(1, alpha1x, beta1x)
+      
+      beta1y = beta0y + sum((y - mu.y[i - 1])^2) * 0.5
+      sigma.sq.y[i] = 1 / rgamma(1, alpha1y, beta1y)
+      
+      s1x = 1 / sqrt(1 / s0x^2 + nx / sigma.sq.x[i]) 
+      s1y = 1 / sqrt(1 / s0y^2 + ny / sigma.sq.y[i])
+      
+      m1x = m0x * s1x^2  / s0x^2  + Sx * s1x^2 / sigma.sq.x[i] 
+      m1y= m0y * s1y^2  / s0y^2  + Sy * s1y^2 / sigma.sq.y[i]
+      
+      mu.x[i] = rnorm(1, m1x, s1x) 
+      mu.y[i] = rnorm(1, m1y, s1y) 
     }
+    
+    res = data.frame(mu.x = tail(mu.x, nIter),
+                     mu.y = tail(mu.y, nIter),
+                     mu.diff = tail(mu.x - mu.y, nIter),
+                     sigma.sq.x = tail(sigma.sq.x, nIter),
+                     sigma.sq.y = tail(sigma.sq.y, nIter),
+                     tstat = tail((mu.x - mu.y) / sqrt(sigma.sq.x / nx + sigma.sq.y / ny), nIter))
   }
   
-  colnames(res) = c("mu.diff", "se.diff", "mu.x","mu.y", "sigma.sq.x", "sigma.sq.y", "t.stat")
-  return(as.data.frame(res))
+  return(res)
 }
