@@ -1,4 +1,4 @@
-#' Bayesian t-test
+#' Bayesian t-Test
 #' 
 #' @description Performs one and two sample t-tests (in the Bayesian hypothesis testing framework) on vectors of data
 #' @param x a (non-empty) numeric vector of data values.
@@ -261,15 +261,16 @@ bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less"
       }
     }else {
       res = bayes.t.gibbs(x, y, nIter, nBurn, sigmaPrior)
-      se.post = res$se.diff
+      se.post = sqrt(rowSums(res[,4:5]/c(nx,ny)))
       likelihood = dnorm(mx - my, param.x, se.post)
       posterior = density(res[,3])$y
-      mpost = mean(res$mu.diff)
-      vpost = var(res[,3])
+      mpost = mean(res[,3])
+      var = sd(res[,3])
       gibbsTstat = mean(res$tstat)
-      gibbsQtl = function(probs, ...){quantile(res$mu.diff, probs = probs, ...)}
+      gibbsQtl = function(probs, ...){quantile(res$mu.df, probs = probs, ...)}
       d = density(res[,3])
-      posterior = d$y
+      posterior = density(res[,3])$y
+      Int = sintegral()
       gibbsCdf = cdf
     }
   }
