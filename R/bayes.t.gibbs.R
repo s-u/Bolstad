@@ -87,6 +87,8 @@ bayes.t.gibbs = function(x, y, nIter = 10000, nBurn = 1000, sigmaPrior = c("chis
     
     ## draw the initial values
     sigma.sq.x[1] = 1/rgamma(1, alpha1x, beta1x)
+    sigma.sq.y[1] = 1/rgamma(1, alpha1y, beta1y)
+    
     mu.x[1] = rnorm(1, m0x, s0x)
     mu.y[1] = rnorm(1, m0y, s0y)
 
