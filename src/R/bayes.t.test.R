@@ -241,7 +241,7 @@ bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less"
       "Gibbs", "Two Sample t-test")
     
     estimate = c(mx, my) ## this may get changed elsewhere
-    names(estimate) = c("mean of x", "mean of y")
+    names(estimate) = c("posterior mean of x", "posterior mean of y")
     
     lb = mx - my - 4 * sqrt(vx/nx + vy/ny)
     ub = mx - my + 4 * sqrt(vx/nx + vy/ny)
@@ -271,6 +271,8 @@ bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less"
         class(bolstadResult) = 'Bolstad'
         
         estimate = c(mx, my)
+        names(estimate) = c("posterior mean of x", "posterior mean of y")
+        
         tstat = (mpost - mu) / se.post
         
       }else{
@@ -299,6 +301,8 @@ bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less"
         class(bolstadResult) = 'Bolstad'
         
         estimate = c(m1post, m2post)
+        names(estimate) = c("posterior mean of x", "posterior mean of y")
+        
         tstat = (mpost - mu)/se.post
       }
     }else {
@@ -324,6 +328,8 @@ bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less"
       class(bolstadResult) = 'Bolstad'
       
       estimate = c(mean(res$mu.x), mean(res$mu.y))
+      names(estimate) = c("posterior mean of x", "posterior mean of y")
+      
       tstat = mean(res$tstat)
       se.post = sd(res$mu.diff)
       snx = mean(res$sigma.sq.x / nx)
