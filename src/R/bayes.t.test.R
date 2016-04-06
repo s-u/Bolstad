@@ -147,8 +147,7 @@ bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less"
   mx = mean(x)
   SSx = sum((x-mx)^2)
   vx = var(x)
-  estimate = 0
-  
+ 
   bolstadResult = NULL
    
   if (is.null(y)) { ## one sample or paired
@@ -186,8 +185,7 @@ bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less"
       class(bolstadResult) = 'Bolstad'
       
       tstat = (mpost - mu) / se.post
-      
-      
+      estimate = mpost
     }else{
       S0 = qchisq(0.5, kappa) * sig.med^2
       S1 = SSx + S0
