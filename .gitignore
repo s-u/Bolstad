@@ -4,3 +4,7 @@
 src/man/*.Rd
 src/NAMESPACE
 .DS_Store
+Bolstad.Rcheck
+Bolstad.Rcheck/*
+
+
