@@ -112,6 +112,12 @@ bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less"
     stop("'conf.level' must be a single number between 0 and 1")
   
   param.x = NULL
+  
+  tstat = 0
+  df = 0
+  pval = 0 
+  cint = 0
+  estimate = 0
     
   if (!is.null(y)) {
     dname = paste(deparse(substitute(x)), "and", deparse(substitute(y)))
@@ -142,6 +148,8 @@ bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less"
   SSx = sum((x-mx)^2)
   vx = var(x)
   estimate = 0
+  
+  bolstadResult = NULL
    
   if (is.null(y)) { ## one sample or paired
     if (nx < 2) 
@@ -168,6 +176,18 @@ bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less"
       likelihood = dnorm(mx, param.x, se.post)
       std.x = (param.x - mpost) / se.post
       posterior = dt(std.x, df = df)
+      
+      bolstadResult = list(name = name, param.x = param.x, 
+                           prior = prior, likelihood = likelihood, posterior = posterior,
+                           mean = mpost,
+                           var = se.post^2,
+                           cdf = function(x)pt((x - mpost) / se.post, df = df),
+                           quantileFun = function(probs, ...){se.post * qt(probs, df = df, ...) + mpost})
+      class(bolstadResult) = 'Bolstad'
+      
+      tstat = (mpost - mu) / se.post
+      
+      
     }else{
       S0 = qchisq(0.5, kappa) * sig.med^2
       S1 = SSx + S0
@@ -178,6 +198,8 @@ bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less"
       mpost = (nx * mx + n0 * m) / npost
       se.post = sqrt(sigma.sq.B / kappa1)
       df = kappa1
+      
+      tstat = (mpost - mu) / se.post
       
       lb = min(mpost - 4 * se.post, m - 4 * sqrt(1 / n0))
       ub = max(mpost + 4 * se.post, m + 4 * sqrt(1 / n0))
@@ -225,10 +247,7 @@ bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less"
     ub = mx - my + 4 * sqrt(vx/nx + vy/ny)
     param.x = seq(lb, ub, length = 1000)
     name = 'mu[1]-mu[2]'
-    gibbsTstat = NULL
-    gibbsCdf = NULL
-    gibbsQtl = NULL
-    
+
     if (var.equal) {
       if(prior == "jeffreys"){
         kappa1 = nx + ny -2
@@ -242,6 +261,16 @@ bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less"
         prior = 1 / diff(range(param.x))
         likelihood = dnorm(mx - my, param.x, se.post)
         posterior = dt((param.x - mpost)/se.post, df)
+        
+        bolstadResult = list(name = name, param.x = param.x, 
+                             prior = prior, likelihood = likelihood, posterior = posterior,
+                             mean = mpost,
+                             var = se.post^2,
+                             cdf = function(x)pt((x - mpost) / se.post, df = df),
+                             quantileFun = function(probs, ...){se.post * qt(probs, df = df, ...) + mpost})
+        class(bolstadResult) = 'Bolstad'
+        
+        
       }else{
         kappa1 = kappa + nx + ny
         n1post = nx + n0[1]
@@ -258,32 +287,45 @@ bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less"
         prior = dnorm(param.x, m[1] - m[2], sqrt(sum(1/n0)))
         likelihood = dnorm(mx - my, param.x, se.post)
         posterior = dt((param.x - mpost)/se.post, df)
+        
+        bolstadResult = list(name = name, param.x = param.x, 
+                             prior = prior, likelihood = likelihood, posterior = posterior,
+                             mean = mpost,
+                             var = se.post^2,
+                             cdf = function(x)pt((x - mpost) / se.post, df = df),
+                             quantileFun = function(probs, ...){se.post * qt(probs, df = df, ...) + mpost})
+        class(bolstadResult) = 'Bolstad'
+        
+        estimate = c(m1post, m2post)
+        tstat = (mpost - mu)/se.post
       }
     }else {
       res = bayes.t.gibbs(x, y, nIter, nBurn, sigmaPrior)
-      se.post = res$se.diff
+      se.post = sd(res$mu.diff)
+      
+      d = density(res$mu.diff, from = param.x[1], to = param.x[length(param.x)])
+      param.x = d$x
       likelihood = dnorm(mx - my, param.x, se.post)
-      posterior = density(res[,3])$y
-      mpost = mean(res$mu.diff)
-      vpost = var(res[,3])
-      gibbsTstat = mean(res$tstat)
-      gibbsQtl = function(probs, ...){quantile(res$mu.diff, probs = probs, ...)}
-      d = density(res[,3])
       posterior = d$y
-      gibbsCdf = cdf
+      mpost = mean(res$mu.diff)
+      vpost = var(res$mu.diff)
+      gibbsQtl = function(probs, ...){quantile(res$mu.diff, probs = probs, ...)}
+      
+      
+      bolstadResult = list(name = name, param.x = d$x, 
+                           prior = NULL, likelihood = likelihood, posterior = posterior,
+                           mean = mpost,
+                           var = vpost,
+                           cdf = function(x){r  = sintegral(param.x, posterior);
+                                             Fx = splinefun(r$x, r$y);
+                                             return(Fx(x))},
+                           quantileFun = function(probs, ...){quantile(res$mu.diff, probs = probs, ...)})
+      class(bolstadResult) = 'Bolstad'
+      
+      estimate = c(mean(res$mu.x), mean(res$mu.y))
+      
     }
   }
-  
-  result = list(name = name, param.x = param.x, 
-                prior = prior, likelihood = likelihood, posterior = posterior,
-                mean = mpost,
-                var = se.post^2,
-                cdf = function(x)pt((x - mpost) / se.post, df = df),
-                quantileFun = function(probs, ...){se.post * qt(probs, df = df, ...) + mpost})
-  class(result) = 'Bolstad'
-  
-  tstat = (mpost - mu) / se.post
-  estimate = mpost
   
   if (alternative == "less") {
     pval = pt(tstat, df)
