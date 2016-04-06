@@ -118,6 +118,7 @@ bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less"
   pval = 0 
   cint = 0
   estimate = 0
+  method = NULL
     
   if (!is.null(y)) {
     dname = paste(deparse(substitute(x)), "and", deparse(substitute(y)))
@@ -147,8 +148,7 @@ bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less"
   mx = mean(x)
   SSx = sum((x-mx)^2)
   vx = var(x)
-  estimate = 0
-  
+ 
   bolstadResult = NULL
    
   if (is.null(y)) { ## one sample or paired
@@ -186,8 +186,7 @@ bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less"
       class(bolstadResult) = 'Bolstad'
       
       tstat = (mpost - mu) / se.post
-      
-      
+      estimate = mpost
     }else{
       S0 = qchisq(0.5, kappa) * sig.med^2
       S1 = SSx + S0
@@ -199,6 +198,7 @@ bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less"
       se.post = sqrt(sigma.sq.B / kappa1)
       df = kappa1
       
+      estimate = mpost
       tstat = (mpost - mu) / se.post
       
       lb = min(mpost - 4 * se.post, m - 4 * sqrt(1 / n0))
@@ -240,7 +240,7 @@ bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less"
     method = paste(if (!var.equal) 
       "Gibbs", "Two Sample t-test")
     
-    estimate = c(mx, my)
+    estimate = c(mx, my) ## this may get changed elsewhere
     names(estimate) = c("mean of x", "mean of y")
     
     lb = mx - my - 4 * sqrt(vx/nx + vy/ny)
@@ -270,6 +270,8 @@ bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less"
                              quantileFun = function(probs, ...){se.post * qt(probs, df = df, ...) + mpost})
         class(bolstadResult) = 'Bolstad'
         
+        estimate = c(mx, my)
+        tstat = (mpost - mu) / se.post
         
       }else{
         kappa1 = kappa + nx + ny
@@ -309,7 +311,6 @@ bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less"
       posterior = d$y
       mpost = mean(res$mu.diff)
       vpost = var(res$mu.diff)
-      gibbsQtl = function(probs, ...){quantile(res$mu.diff, probs = probs, ...)}
       
       
       bolstadResult = list(name = name, param.x = d$x, 
@@ -323,7 +324,11 @@ bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less"
       class(bolstadResult) = 'Bolstad'
       
       estimate = c(mean(res$mu.x), mean(res$mu.y))
-      
+      tstat = mean(res$tstat)
+      se.post = sd(res$mu.diff)
+      snx = mean(res$sigma.sq.x / nx)
+      sny = mean(res$sigma.sq.y / ny)
+      df = (snx + sny)^2 / (snx^2 / (nx - 1) + sny^2 / (ny - 1))
     }
   }
   
@@ -344,14 +349,14 @@ bayes.t.test.default = function(x, y = NULL, alternative = c("two.sided", "less"
   cint = mu + cint * se.post
   names(tstat) = "t"
   names(df) = "df"
-  #names(mu) = if (paired || !is.null(y)) 
-  #  "difference in means"
-  #else "mean"
-  #attr(cint, "conf.level") = conf.level
+  names(mu) = if (paired || !is.null(y)) 
+    "difference in means"
+  else "mean"
+  attr(cint, "conf.level") = conf.level
   rval = list(statistic = tstat, parameter = df, p.value = pval, 
                conf.int = cint, estimate = estimate, null.value = mu, 
                alternative = alternative, method = method, data.name = dname,
-              result = result)
+              result = bolstadResult)
   class(rval) = "htest"
   return(rval)
 }
