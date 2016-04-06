@@ -9,6 +9,10 @@ Description: A set of R functions and data sets for the book Introduction to
 License: GPL (>= 2)
 LazyData: true
 Depends: R (>= 3.2.0)
-Imports:
-  mvtnorm
+Imports: mvtnorm
 RoxygenNote: 5.0.1
+NeedsCompilation: no
+Packaged: 2016-04-06 05:18:08 UTC; jcur002
+Author: James Curran [aut, cre]
+Maintainer: James Curran <j.curran@auckland.ac.nz>
+Built: R 3.2.4; ; 2016-04-06 05:18:09 UTC; unix
