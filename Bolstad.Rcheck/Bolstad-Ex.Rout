@@ -1,5 +1,5 @@
 
-R version 3.2.4 (2016-03-10) -- "Very Secure Dishes"
+R version 3.3.2 (2016-10-31) -- "Sincere Pumpkin Patch"
 Copyright (C) 2016 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin13.4.0 (64-bit)
 
@@ -272,7 +272,8 @@ alternative hypothesis: true difference in means is not equal to 0
 95 percent confidence interval:
  -11.223245  -4.776755
 sample estimates:
-[1]  5.5 13.5
+posterior mean of x posterior mean of y 
+                5.5                13.5 
 
 > 
 > ## Same example but with using the joint conjugate prior
@@ -292,7 +293,8 @@ alternative hypothesis: true difference in means is not equal to 0
 95 percent confidence interval:
  -11.006105  -4.985612
 sample estimates:
-[1]  5.494505 13.490364
+posterior mean of x posterior mean of y 
+           5.494505           13.490364 
 
 > 
 > ##' Same example but with a large outlier. Note the assumption of equal variances isn't sensible
@@ -306,7 +308,8 @@ alternative hypothesis: true difference in means is not equal to 0
 95 percent confidence interval:
  -52.31273  11.44606
 sample estimates:
-[1]  5.50000 25.93333
+posterior mean of x posterior mean of y 
+            5.50000            25.93333 
 
 > 
 > ## Classical example: Student's sleep data
@@ -323,7 +326,8 @@ alternative hypothesis: true difference in means is not equal to 0
 95 percent confidence interval:
  -3.363874  0.203874
 sample estimates:
-[1] 0.75 2.33
+posterior mean of x posterior mean of y 
+               0.75                2.33 
 
 > 
 > ## Formula interface
@@ -4552,7 +4556,7 @@ Approximate 95% credible interval : [1.1482 3.7478]
 > 
 > ### ** Examples
 > 
-> ## The useful of this method is really highlighted when we have a general 
+> ## The usefulness of this method is really highlighted when we have a general 
 > ## continuous prior. In this example we are interested in the posterior
 > ## standard deviation of an normal mean. Our prior is triangular over [-3, 3]
 > set.seed(123)
@@ -5012,7 +5016,7 @@ Blocked		-0.522	0.464	-0.12	0.073
 > ###
 > options(digits = 7L)
 > base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  1.936 0.093 2.085 0 0 
+Time elapsed:  1.368 0.065 1.454 0 0 
 > grDevices::dev.off()
 null device 
           1 

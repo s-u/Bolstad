@@ -4,12 +4,14 @@
 \alias{median.Bolstad}
 \title{Median generic}
 \usage{
-\method{median}{Bolstad}(x, na.rm = FALSE)
+function(x, na.rm = FALSE, ...)
 }
 \arguments{
 \item{x}{an object.}
 
-\item{na.rm}{Ideally if \code{TRUE} then missing values will be removed, but not currently used}
+\item{na.rm}{Ideally if \code{TRUE} then missing values will be removed, but not currently used.}
+
+\item{...}{[>=R3.40 only] Not currently used.}
 }
 \description{
 Median generic
@@ -21,4 +23,3 @@ If \code{x} is an object of class \code{Bolstad} then the posterior
 \author{
 James Curran
 }
-

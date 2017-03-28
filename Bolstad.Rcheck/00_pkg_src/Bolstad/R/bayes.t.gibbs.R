@@ -1,3 +1,4 @@
+#' @importFrom utils tail
 bayes.t.gibbs = function(x, y, nIter = 10000, nBurn = 1000, sigmaPrior = c("chisq", "gamma")){
   
   sigmaPrior = match.arg(sigmaPrior)
