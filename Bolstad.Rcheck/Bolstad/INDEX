@@ -18,7 +18,6 @@ decomp                  Plot the prior, likelihood, and posterior on
                         the same plot.
 lines.Bolstad           Lines method for Bolstad objects
 mean.Bolstad            Calculate the posterior mean
-median.Bolstad          Median generic
 mvnmvnp                 Bayesian inference on a mutlivariate normal
                         (MVN) mean with a multivariate normal (MVN)
                         prior

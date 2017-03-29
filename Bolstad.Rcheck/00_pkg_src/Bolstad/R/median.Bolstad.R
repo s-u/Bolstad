@@ -7,14 +7,12 @@
 #'   median of the parameter of interest will be calculated.
 #' @author James Curran
 #' @method median Bolstad
-median.Bolstad =
 if(is.na(match("...", names(formals(median))))) {
-  function(x, na.rm = FALSE) {
+  median.Bolstad = function(x, na.rm = FALSE) {
     return(quantile(x, probs = 0.5))
   }
 }else{
-#' @usage function(x, na.rm = FALSE, ...)
-  function(x, na.rm = FALSE, ...) {
+  median.Bolstad = function(x, na.rm = FALSE, ...) {
     return(quantile(x, probs = 0.5))
   }
 }

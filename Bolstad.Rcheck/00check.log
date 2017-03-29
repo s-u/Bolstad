@@ -42,15 +42,7 @@ Maintainer: ‘James Curran <j.curran@auckland.ac.nz>’
 * checking Rd cross-references ... OK
 * checking for missing documentation entries ... OK
 * checking for code/documentation mismatches ... OK
-* checking Rd \usage sections ... WARNING
-Bad \usage lines found in documentation object 'median.Bolstad':
-  function(x, na.rm = FALSE, ...)
-
-Functions with \usage entries need to have the appropriate \alias
-entries, and all their arguments documented.
-The \usage entries must correspond to syntactically valid R code.
-See chapter ‘Writing R documentation files’ in the ‘Writing R
-Extensions’ manual.
+* checking Rd \usage sections ... OK
 * checking Rd contents ... OK
 * checking for unstated dependencies in examples ... OK
 * checking contents of ‘data’ directory ... OK
@@ -60,4 +52,4 @@ Extensions’ manual.
 * checking examples ... OK
 * checking PDF version of manual ... OK
 * DONE
-Status: 1 WARNING
+Status: OK
