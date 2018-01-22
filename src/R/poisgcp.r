@@ -124,7 +124,7 @@ poisgcp = function(y,
     if (length(mu) != length(mu.prior))
       stop("Error: There must be an equal number of values in mu and mu prior")
     
-  } else if (density == "normal" & ((is.null(mu) || is.null(mu.prior))) {
+  } else if (density == "normal" & (is.null(mu) || is.null(mu.prior))) {
     ## shouldn't need the second clause as it should get trapped by the above
     if (length(params) != 2)
       stop("Error: A mean and a std. deviation must be specified for a normal prior")
@@ -147,7 +147,7 @@ poisgcp = function(y,
     
     mu = seq(lb, ub, length = n.mu)
     mu.prior = dnorm(mu, mx, sx)
-  } else if (density == "gamma" & ((is.null(mu) || is.null(mu.prior))) {
+  } else if (density == "gamma" & (is.null(mu) || is.null(mu.prior))) {
     if (length(params) != 2)
       stop("Error: there must be two parameters, a0 and b0 for a gamma prior")
     if (sum(params < 0) > 0)
