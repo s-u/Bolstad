@@ -27,15 +27,15 @@
 #' @keywords misc
 #' @examples
 #' 
-#' ## simplest call with an observation of 4 and a gamma(1,1), i.e. an exponential prior on the
+#' ## simplest call with an observation of 4 and a gamma(1, 1), i.e. an exponential prior on the
 #' ## mu
-#' poisgamp(4,1,1)
+#' poisgamp(4, 1, 1)
 #' 
-#' ##  Same as the previous example but a gamma(10,1) prior
-#' poisgamp(4,10,1)
+#' ##  Same as the previous example but a gamma(10, ) prior
+#' poisgamp(4, 10, 1)
 #' 
-#' ##  Same as the previous example but an improper gamma(1,0) prior
-#' poisgamp(4,1,0)
+#' ##  Same as the previous example but an improper gamma(1, ) prior
+#' poisgamp(4, 1, 0)
 #' 
 #' ## A random sample of 50 observations from a Poisson distribution with
 #' ## parameter mu = 3 and  gamma(6,3) prior
@@ -63,9 +63,8 @@
 #' 
 #' 
 #' @export poisgamp
-poisgamp = function(y, shape, rate = 1, scale = 1 / rate,
-                    alpha = 0.05,
-                    plot = TRUE, suppressOutput = FALSE){
+poisgamp = function(y, shape, rate = 1, scale = 1 / rate, 
+                    alpha = 0.05, plot = TRUE, suppressOutput = FALSE){
   n = length(y)
   y.sum = sum(y)
   
@@ -85,8 +84,8 @@ poisgamp = function(y, shape, rate = 1, scale = 1 / rate,
   if(!suppressOutput){
     cat("Summary statistics for data\n")
     cat("---------------------------\n")
-    cat(paste("Number of observations:\t", n,"\n"))
-    cat(paste("Sum of observations:\t", y.sum,"\n\n"))
+    cat(paste("Number of observations:\t", n, "\n"))
+    cat(paste("Sum of observations:\t", y.sum, "\n\n"))
   }
   
   if(rate > 0){                              ##proper gamma prior
@@ -96,7 +95,7 @@ poisgamp = function(y, shape, rate = 1, scale = 1 / rate,
     shapePost = shape + y.sum
     ratePost = rate + n
     
-    prior = dgamma(mu,shape, rate)
+    prior = dgamma(mu, shape, rate)
     posterior = dgamma(mu, shapePost, ratePost)
   }else if(rate == 0){
     shapePost = shape + y.sum
@@ -115,45 +114,53 @@ poisgamp = function(y, shape, rate = 1, scale = 1 / rate,
     stop("Error: rate must be greater or equal to zero")
   }
 
-  likelihood = matrix(0, ncol = length(mu), nrow = length(y))
-  for(i in 1:length(mu)){
-    likelihood[,i] = dpois(y,mu[i])
+  likelihood = sapply(mu, dpois, x = y, simplify = "array")
+  if(is.matrix(likelihood)){
+    likelihood = apply(likelihood, 2, prod)
   }
   
-  likelihood = apply(likelihood, 2, prod)
   posterior = dgamma(mu, shapePost, ratePost)
     credInt = qgamma(c(alpha * 0.5 , 1 - alpha * 0.5), shapePost, ratePost)
   
   if(!suppressOutput){
     cat("Summary statistics for posterior\n")
     cat("--------------------------------\n")
-    cat(paste("Shape parameter (r):\t", shapePost,"\n"))
-    cat(paste("Rate parameter (v):\t",ratePost,"\n"))
+    cat(paste("Shape parameter (r):\t", shapePost, "\n"))
+    cat(paste("Rate parameter (v):\t", ratePost, "\n"))
     cat(sprintf("%d%% credible interval for mu:\t[%.2f, %.2f]\n",
                 round(100 * (1 - alpha)),
-                credInt[1], credInt[2]))
+                credInt[1], 
+                credInt[2]))
   }
   
   if(plot){
-    y.max = max(prior,posterior)
-    plot(mu,prior,ylim = c(0,1.1*y.max),xlab = expression(mu),
-         ylab = "Density",
-         main = "Shape of gamma prior and posterior\n for Poisson mean",
-         type = "l",lty = 2,col = "red")
-    lines(mu,posterior,lty = 3,col = "blue")
-    legend("topleft", bty = "n", lty = 2:3, col = c("red","blue"),
-           legend = c("Prior","Posterior"), cex = 0.7)
+    y.max = max(prior[is.finite(prior)], posterior)
+    plot(mu[is.finite(prior)], prior[is.finite(prior)], 
+         ylim = c(0, 1.1 * y.max), xlab = expression(mu),          
+         ylab = "Density",          main = "Shape of gamma prior and posterior\n for Poisson mean",          
+         type = "l", 
+         lty = 2, 
+         col = "red")
+    lines(mu, posterior, lty = 3, col = "blue")
+    legend("topleft", bty = "n", lty = 2:3, 
+           col = c("red", "blue"),
+           legend = c("Prior", "Posterior"), 
+           cex = 0.7)
   }
  
   
-  results = list(name = 'mu', param.x = mu, prior = prior, 
-                 likelihood = likelihood, posterior = posterior,
+  results = list(name = 'mu', 
+                 param.x = mu, 
+                 prior = prior, 
+                 likelihood = likelihood, 
+                 posterior = posterior,
                  mean = shapePost / ratePost, 
                  var = shapePost / ratePost^2,
                  cdf = function(m, ...){pgamma(m, shape = shapePost, rate = ratePost, ...)},
                  quantileFun = function(probs, ...){qgamma(probs, shape = shapePost, rate = ratePost, ...)},
                  mu = mu, # for backwards compatibility only
-                 shape = shapePost, rate = ratePost)
+                 shape = shapePost, 
+                 rate = ratePost)
   
   class(results) = 'Bolstad'
   invisible(results)

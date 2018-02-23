@@ -7,16 +7,18 @@
 #'
 #' @param y A random sample of one or more observations from a Poisson
 #' distribution
-#' @param density may be one of "gamma", "normal", or "user"
+#' @param density may be one of \code{"gamma"}, \code{"normal"}, or \code{"user"}
 #' @param params if density is one of the parameteric forms then then a vector
 #' of parameters must be supplied.  gamma: a0,b0 normal: mean,sd
 #' @param n.mu the number of possible \eqn{\mu}{mu} values in the prior. This
 #' number must be greater than or equal to 100. It is ignored when
 #' density="user".
-#' @param mu a vector of possibilities for the mean of a Poisson distribution.
-#' This must be set if density="user".
-#' @param mu.prior the associated prior density. This must be set if
-#' density="user".
+#' @param mu either a vector of possibilities for the mean of a Poisson distribution, or a range (a vector of length 2) of values.
+#' This must be set if \code{density = "user"}. If \code{mu} is a range, then \code{n.mu} will be used to decide how many points to 
+#' discretise this range over.
+#' @param mu.prior either a vector containing y values correspoding to the values in \code{mu}, or a function. 
+#' This is used to specifiy the prior \eqn{f(\mu)}{f(mu)}. So \code{mu.prior} can be a vector containing \eqn{f(\mu_i)}{f(mu[i])} 
+#' for every \eqn{\mu_i}{mu[i]}, or a funtion. This must be set if \code{density == "user"}.
 #' @param print.sum.stat if set to TRUE then the posterior mean, posterior
 #' variance, and a credible interval for the mean are printed. The width of the
 #' credible interval is controlled by the parameter alpha.
@@ -39,11 +41,11 @@
 #' ## Our data is random sample is 3, 4, 3, 0, 1. We will try a normal
 #' ## prior with a mean of 2 and a standard deviation of 0.5.
 #' y = c(3,4,3,0,1)
-#' poisgcp(y,density="normal",params=c(2,0.5))
+#' poisgcp(y, density = "normal", params = c(2,0.5))
 #'
 #' ## The same data as above, but with a gamma(6,8) prior
 #' y = c(3,4,3,0,1)
-#' poisgcp(y,density="gamma",params=c(6,8))
+#' poisgcp(y, density = "gamma", params = c(6,8))
 #'
 #' ## The same data as above, but a user specified continuous prior.
 #' ## We will use print.sum.stat to get a 99% credible interval for mu.
@@ -82,6 +84,52 @@
 #' cat(paste("Approximate 95% credible interval : ["
 #' 	,round(lb,4)," ",round(ub,4),"]\n",sep=""))
 #'
+#' # NOTE: All the examples given above can now be done trivially in this package
+#' 
+#' ## find the posterior CDF using the results from the previous example
+#' results = poisgcp(y,"user",mu=mu,mu.prior=mu.prior)
+#' cdf = cdf(results)
+#' curve(cdf,type="l",xlab=expression(mu[0])
+#' 	,ylab=expression(Pr(mu<=mu[0])))
+#'
+#' ## use the quantile function to find the 95% credible region.
+#' ci = quantile(results, c(0.025, 0.975))
+#' cat(paste0("Approximate 95% credible interval : ["
+#' 	,round(ci[1],4)," ",round(ci[2],4),"]\n"))
+#'
+#' ## find the posterior mean, variance and std. deviation
+#' ## using the output from the previous example
+#' post.mean = mean(results)
+#'
+#' post.var = var(results)
+#' post.sd = sd(results)
+#'
+#' # calculate an approximate 95% credible region using the posterior mean and
+#' # std. deviation
+#' ci = post.mean + c(-1, 1) * qnorm(0.975) * post.sd
+#'
+#' cat(paste("Approximate 95% credible interval : ["
+#' 	,round(ci[1],4)," ",round(ci[2],4),"]\n",sep=""))
+#'
+#' ## Example 10.1 Dianna's prior
+#' # Firstly we need to write a function that replicates Diana's prior
+#' f = function(mu){
+#'    result = rep(0, length(mu))
+#'    result[mu >=0 & mu <=2] = mu[mu >=0 & mu <=2]
+#'    result[mu >=2 & mu <=4] = 2
+#'    result[mu >=4 & mu <=8] = 4 - 0.5 * mu[mu >=4 & mu <=8]
+#'    
+#'    ## we don't need to scale so the prior integrates to one, 
+#'    ## but it makes the results nicer to see
+#'    
+#'    A = 2 + 4 + 4
+#'    result = result / A
+#'    
+#'    return(result)
+#'  }
+#'  
+#'  results = poisgcp(y, mu = c(0, 10), mu.prior = f)
+#'
 #' @export poisgcp
 poisgcp = function(y,
                    density = c("normal", "gamma", "user"),
@@ -108,12 +156,28 @@ poisgcp = function(y,
   
   density = match.arg(density)
   
-  if (density == "user" || (length(mu) > 1 && length(mu.prior) > 1)){
+  if (density == "user" || is.function(mu.prior) || (length(mu) > 1 && length(mu.prior) > 1)){
     if(density != "user"){
       errMessage = paste("A user density is being used because mu and mu.prior have been provided.",
                          "If this was not your intention then remove these vectors from the ",
                          "function call", sep = "\n")
       warning(errMessage)
+    }
+    
+    if(is.function(mu.prior)){
+      if(length(mu) != 2){
+        errMessage = paste("mu.prior is a function, therefore, mu must be a vector of length 2",
+                           "over which mu.prior is evaluated ",
+                           "function call", sep = "\n")
+        stop(errMessage)
+      }
+      
+      mu = seq(mu[1], mu[2], length = n.mu)
+      mu.prior = mu.prior(mu)
+      
+      if(any(mu.prior < 0)){
+        stop("mu.prior must be greater than, or equal to zero for all values of mu")
+      }
     }
     
     if (is.null(mu) || is.null(mu.prior))
@@ -131,11 +195,15 @@ poisgcp = function(y,
     mx = params[1]
     sx = params[2]
     
+    if(mx <= 0){
+      stop("Error: the prior mean must be greater than zero")
+    }
+    
     if (sx <= 0)
       stop("Error: the std. deviation of a normal prior must be greater than zero")
     
-    lb = mx - 3.5 * sx
-    ub = mx + 3.5 * sx
+    lb = min(qnorm(1 / n.mu, mx, sx), mx - 3.5 * sx)
+    ub = max(qnorm(1 - 1 / n.mu, mx, sx), mx + 3.5 * sx)
     
     if (lb < 0) {
       cat("The normal prior has negative values.")
@@ -146,7 +214,8 @@ poisgcp = function(y,
     }
     
     mu = seq(lb, ub, length = n.mu)
-    mu.prior = dnorm(mu, mx, sx)
+    mu.prior = dnorm(mu, mx, sx) / pnorm(0, mx, sx, lower.tail = FALSE) ## note this changed in 0.2-36 to rescale for the probability mass below 0
+    
   } else if (density == "gamma" & (is.null(mu) || is.null(mu.prior))) {
     if (length(params) != 2)
       stop("Error: there must be two parameters, a0 and b0 for a gamma prior")
