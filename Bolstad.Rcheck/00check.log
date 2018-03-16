@@ -4,7 +4,7 @@
 * using session charset: UTF-8
 * using options ‘--no-manual --as-cran’
 * checking for file ‘Bolstad/DESCRIPTION’ ... OK
-* this is package ‘Bolstad’ version ‘0.2-36’
+* this is package ‘Bolstad’ version ‘0.2-38’
 * checking package namespace information ... OK
 * checking package dependencies ... OK
 * checking if this is a source package ... OK
@@ -46,6 +46,52 @@
 * checking data for non-ASCII characters ... OK
 * checking data for ASCII and uncompressed saves ... OK
 * checking R/sysdata.rda ... OK
-* checking examples ... OK
+* checking examples ... ERROR
+Running examples in ‘Bolstad-Ex.R’ failed
+The error most likely occurred in:
+
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: binomixp
+> ### Title: Binomial sampling with a beta mixture prior
+> ### Aliases: binomixp
+> ### Keywords: misc
+> 
+> ### ** Examples
+> 
+> 
+> ## simplest call with 6 successes observed in 8 trials and a 50:50 mix
+> ## of two beta(1,1) uniform priors
+> binomixp(6,8)
+Prior probability of the data under component 0
+----------------------------
+Log prob.: -2.2 
+Probability:  0.11111 
+
+Prior probability of the data under component 1
+----------------------------
+Log prob.: -2.2 
+Probability:  0.11111 
+
+Post. mixing proportion for component 0: 0.5 
+Post. mixing proportion for component 1: 0.5 
+> 
+> ## 6 successes observed in 8 trials and a 20:80 mix of a non-uniform
+> ## beta(0.5,6) prior and a uniform beta(1,1) prior
+> binomixp(6,8,alpha0=c(0.5,6),alpha1=c(1,1),p=0.2)
+Prior probability of the data under component 0
+----------------------------
+Log prob.: -6.04 
+Probability:  0.0023812 
+
+Prior probability of the data under component 1
+----------------------------
+Log prob.: -2.2 
+Probability:  0.11111 
+
+Post. mixing proportion for component 0: 0.00533 
+Post. mixing proportion for component 1: 0.995 
+Error in plot.window(...) : need finite 'ylim' values
+Calls: binomixp -> plot -> plot.default -> localWindow -> plot.window
+Execution halted
 * DONE
-Status: OK
+Status: 1 ERROR

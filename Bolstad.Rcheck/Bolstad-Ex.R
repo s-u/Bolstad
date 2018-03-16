@@ -343,22 +343,22 @@ binomixp(6,8,alpha0=c(0.5,6),alpha1=c(1,1),p=0.2)
 ## 4 successes observed in 12 trials with a 90:10 non uniform beta(3,3) prior
 ## and a non uniform beta(4,12).
 ## Plot the stored prior, likelihood and posterior
-results = binomixp(4,12,c(3,3),c(4,12),0.9)$mix
+results = binomixp(4, 12, c(3, 3), c(4, 12), 0.9)$mix
 
-par(mfrow=c(3,1))
-y.lims = c(0,1.1*max(results$posterior,results$prior))
+par(mfrow = c(3,1))
+y.lims = c(0, 1.1 * max(results$posterior, results$prior))
 
-plot(results$pi,results$prior,ylim=y.lims,type="l"
-	,xlab=expression(pi),ylab="Density",main="Prior")
-polygon(results$pi,results$prior,col="red")
+plot(results$pi,results$prior,ylim=y.lims,type='l'
+,xlab=expression(pi),ylab='Density',main='Prior')
+polygon(results$pi,results$prior,col='red')
 
-plot(results$pi,results$likelihood,type="l"
-	,xlab=expression(pi),ylab="Density",main="Likelihood")
-polygon(results$pi,results$likelihood,col="green")
+plot(results$pi,results$likelihood,type='l',
+     xlab = expression(pi), ylab = 'Density', main = 'Likelihood')
+polygon(results$pi,results$likelihood,col='green')
 
-plot(results$pi,results$posterior,ylim=y.lims,type="l"
-	,xlab=expression(pi),ylab="Density",main="Posterior")
-polygon(results$pi,results$posterior,col="blue")
+plot(results$pi,results$posterior,ylim=y.lims,type='l'
+,xlab=expression(pi),ylab='Density',main='Posterior')
+polygon(results$pi,results$posterior,col='blue')
 
 
 
@@ -427,6 +427,30 @@ mean(results)
 
 base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
 base::cat("mean.Bolstad", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+cleanEx()
+nameEx("moisture.df")
+### * moisture.df
+
+flush(stderr()); flush(stdout())
+
+base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+### Name: moisture.df
+### Title: Moisture data
+### Aliases: moisture.df
+### Keywords: datasets
+
+### ** Examples
+
+
+data(moisture.df)
+plot(final.level~proc.level, data = moisture.df)
+
+
+
+
+
+base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+base::cat("moisture.df", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 cleanEx()
 nameEx("normdp")
 ### * normdp
