@@ -149,7 +149,7 @@ binomixp = function(x, n, alpha0 = c(1, 1), alpha1 = c(1, 1), p = 0.5, plot = TR
     
     ## plot the mixture posterior likelihood and mixture posterior
     
-    y.max = max(prior, posterior, likelihood)
+    y.max = max(prior[is.finite(prior)], posterior, likelihood)
     
     plot(pi, prior, ylim = c(0, y.max * 1.1), xlab = expression(pi), ylab = "Density", main = "Mixture prior, likelihood and mixture posterior", 
          type = "l", lty = 2, col = "black")

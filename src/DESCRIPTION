@@ -1,6 +1,6 @@
 Package: Bolstad
 Version: 0.2-38
-Date: 2018-03-12
+Date: 2018-03-27
 Title: Functions for Elementary Bayesian Inference
 Authors@R: person("James", "Curran", email = "j.curran@auckland.ac.nz",
                   role = c("aut", "cre"))

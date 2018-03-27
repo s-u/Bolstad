@@ -102,14 +102,14 @@
 #' ciApprox
 #' 
 #' @export normgcp
-normgcp = function(x, sigma.x = NULL, density = c("flat", "normal", "uniform", "user") ,
+normgcp = function(x, sigma.x = NULL, density = c("uniform", "normal", "flat", "user") ,
                    params = NULL, n.mu = 50, mu = NULL,
                    mu.prior = NULL, plot = TRUE){
 
   ## x - the vector of observations
   ## sigma.x - the population standard deviation
   ## density - distributional form of the prior density
-  ## can be one of : normal, unform, or user
+  ## can be one of : flat, normal, unform, or user
   ## by default a continuous uniform prior is used
   ## mu - vector of possible values of the population mean
   ## mu.prior - the associated prior probability mass
