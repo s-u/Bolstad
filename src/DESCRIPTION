@@ -1,6 +1,6 @@
 Package: Bolstad
-Version: 0.2-38
-Date: 2018-03-27
+Version: 0.2-40
+Date: 2018-10-09
 Title: Functions for Elementary Bayesian Inference
 Authors@R: person("James", "Curran", email = "j.curran@auckland.ac.nz",
                   role = c("aut", "cre"))
@@ -10,4 +10,5 @@ LazyData: true
 Depends: R (>= 3.2.0)
 Imports:
   mvtnorm
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0
+Encoding: UTF-8
