@@ -24,10 +24,7 @@
 #' credible interval is controlled by the parameter alpha.
 #' @param alpha The width of the credible interval is controlled by the
 #' parameter alpha.
-#' @param plot if \code{TRUE} then a plot showing the prior and the posterior
-#' will be produced.
-#' @param suppressOutput if \code{TRUE} then none of the output is printed to
-#' console
+#' @param \dots additional arguments that are passed to \code{Bolstad.control}
 #' @return A list will be returned with the following components: \item{mu}{the
 #' vector of possible \eqn{\mu}{mu} values used in the prior}
 #' \item{mu.prior}{the associated probability mass for the values in
@@ -139,8 +136,7 @@ poisgcp = function(y,
                    mu.prior = NULL,
                    print.sum.stat = FALSE,
                    alpha = 0.05,
-                   plot = TRUE,
-                   suppressOutput = FALSE) {
+                   ...) {
   n = length(y)
   y.sum = sum(y)
   y.bar = mean(y)
@@ -240,6 +236,7 @@ poisgcp = function(y,
   if (sum(mu < 0) > 0)
     stop("Error: mu cannot contain negative values")
   
+  suppressOutput = Bolstad.control(...)$quiet
   if (!suppressOutput) {
     cat("Summary statistics for data\n")
     cat("---------------------------\n")
@@ -284,7 +281,7 @@ poisgcp = function(y,
     ))
   }
   
-  if (plot) {
+  if (Bolstad.control(...)$plot) {
     y.max = max(mu.prior, posterior)
     plot(
       mu,

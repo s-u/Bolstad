@@ -18,8 +18,7 @@
 #' is the prior is \eqn{pimes beta(a_0,b_0)+(1-p)imes
 #' beta(a_1,b_1)}{p*beta(a0,b0)+(1-p)*beta(a1,b1)}. \eqn{p} is set to 0.5 by
 #' default
-#' @param plot if \code{TRUE} then a plot showing the prior and the posterior
-#' will be produced
+#' @param \dots additional arguments that are passed to \code{Bolstad.control}
 #' @return A list will be returned with the following components: \item{pi}{the
 #' values of \eqn{\pi}{pi} for which the posterior density was evaluated}
 #' \item{posterior}{the posterior density of \eqn{\pi}{pi} given \eqn{n} and
@@ -62,7 +61,7 @@
 #'
 #'
 #' @export binomixp
-binomixp = function(x, n, alpha0 = c(1, 1), alpha1 = c(1, 1), p = 0.5, plot = TRUE) {
+binomixp = function(x, n, alpha0 = c(1, 1), alpha1 = c(1, 1), p = 0.5, ...) {
   if (n < x) 
     stop("Error: n must be greater than or equal to x")
   
@@ -122,7 +121,7 @@ binomixp = function(x, n, alpha0 = c(1, 1), alpha1 = c(1, 1), p = 0.5, plot = TR
   normalizing.factor = sum(likelihood)/length(likelihood)
   likelihood = likelihood/normalizing.factor
   
-  if (plot) {
+  if (Bolstad.control(...)$plot) {
     o.par = par(mfrow = c(2, 2))
     
     ## plot the priors and the mixture prior

@@ -15,8 +15,7 @@
 #' then a vector centered on the sample mean is created.
 #' @param n.mu the number of possible \eqn{\mu}{mu} values in the prior.
 #' @param p the mixing proportion for the two component normal priors.
-#' @param plot if \code{TRUE} then a plot showing the prior and the posterior
-#' will be produced.
+#' @param \dots additional arguments that are passed to \code{Bolstad.control}
 #' @return A list will be returned with the following components: \item{mu}{the
 #' vector of possible \eqn{\mu}{mu} values used in the prior} \item{prior}{the
 #' associated probability mass for the values in \eqn{\mu}{mu}}
@@ -46,7 +45,7 @@
 #' 
 #' @export normmixp
 normmixp = function(x, sigma.x, prior0, prior1, p = 0.5, mu = NULL, n.mu = max(100, length(mu)),
-                    plot = TRUE){
+                    ...){
 
   if(length(x) == 0)
     stop("Error: x must contain at least one observation")
@@ -162,7 +161,7 @@ normmixp = function(x, sigma.x, prior0, prior1, p = 0.5, mu = NULL, n.mu = max(1
   f.mu = approxfun(mu, likelihood)
   cat(paste("\nIntegral of likelihood over mu: ", round(integrate(f.mu, k1, k2)$value, 5), "\n"))
 
-  if(plot){
+  if(Bolstad.control(...)$plot){
     o.par = par(mfrow = c(2, 2))
   
     ##plot the priors and the mixture prior

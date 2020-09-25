@@ -11,10 +11,7 @@
 #' @param scale the scale parameter of the \eqn{gamma} prior
 #' @param alpha the width of the credible interval is controlled by the
 #' parameter alpha.
-#' @param plot if \code{TRUE} then a plot showing the prior and the posterior
-#' will be produced.
-#' @param suppressOutput if \code{TRUE} then none of the output is printed to
-#' console
+#' @param \dots additional arguments that are passed to \code{Bolstad.control}
 #' @return An object of class 'Bolstad' is returned. This is a list with the
 #' following components:
 #' 
@@ -64,7 +61,7 @@
 #' 
 #' @export poisgamp
 poisgamp = function(y, shape, rate = 1, scale = 1 / rate, 
-                    alpha = 0.05, plot = TRUE, suppressOutput = FALSE){
+                    alpha = 0.05,  ...){
   n = length(y)
   y.sum = sum(y)
   
@@ -81,6 +78,7 @@ poisgamp = function(y, shape, rate = 1, scale = 1 / rate,
   if(shape < 0 || rate < 0)
     stop("Shape parameter and rate parameter must be greater than or equal to zero")
   
+  suppressOutput = Bolstad.control(...)$quiet
   if(!suppressOutput){
     cat("Summary statistics for data\n")
     cat("---------------------------\n")
@@ -120,7 +118,7 @@ poisgamp = function(y, shape, rate = 1, scale = 1 / rate,
   }
   
   posterior = dgamma(mu, shapePost, ratePost)
-    credInt = qgamma(c(alpha * 0.5 , 1 - alpha * 0.5), shapePost, ratePost)
+  credInt = qgamma(c(alpha * 0.5 , 1 - alpha * 0.5), shapePost, ratePost)
   
   if(!suppressOutput){
     cat("Summary statistics for posterior\n")
@@ -133,7 +131,7 @@ poisgamp = function(y, shape, rate = 1, scale = 1 / rate,
                 credInt[2]))
   }
   
-  if(plot){
+  if(Bolstad.control(...)$plot){
     y.max = max(prior[is.finite(prior)], posterior)
     plot(mu[is.finite(prior)], prior[is.finite(prior)], 
          ylim = c(0, 1.1 * y.max), xlab = expression(mu),          
