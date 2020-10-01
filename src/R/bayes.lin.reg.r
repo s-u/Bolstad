@@ -43,14 +43,16 @@
 #' vector predicted values corresponding to pred.x. If pred.x is NULL then this
 #' is not returned} \item{pred.se}{The standard errors of the predicted values
 #' in pred.y. If pred.x is NULL then this is not returned}
+#' @param \dots additional arguments that are passed to \code{Bolstad.control}
 #' @keywords misc
 #' @examples
 #' 
 #' ## generate some data from a known model, where the true value of the
 #' ## intercept alpha is 2, the true value of the slope beta is 3, and the
 #' ## errors come from a normal(0,1) distribution
+#' set.seed(123)
 #' x = rnorm(50)
-#' y = 22+3*x+rnorm(50)
+#' y = 2 + 3*x + rnorm(50)
 #' 
 #' ## use the function with a flat prior for the slope beta and a
 #' ## flat prior for the intercept, alpha_xbar.
@@ -83,7 +85,8 @@ bayes.lin.reg = function(y, x, slope.prior = c("flat", "normal"),
                         intcpt.prior = c("flat", "normal"), 
                         mb0 = 0, sb0 = 0, ma0 = 0, sa0 = 0, 
                         sigma = NULL, alpha = 0.05, plot.data = FALSE, 
-                        pred.x = NULL) {
+                        pred.x = NULL,
+                        ...) {
 
   if(sum(is.na(y)) > 0 || sum(is.na(x)) > 0)
     stop("Error: x and y may not contain missing values")
@@ -133,6 +136,7 @@ bayes.lin.reg = function(y, x, slope.prior = c("flat", "normal"),
   Ax.bar = y.bar
   
   quiet = Bolstad.control(...)$quiet
+  drawPlot = Bolstad.control(...)$plot
   
   sigma.known = TRUE
   if(is.null(sigma)){
@@ -202,21 +206,22 @@ bayes.lin.reg = function(y, x, slope.prior = c("flat", "normal"),
   likelihood.b = dnorm(beta, b.ls, sd.ls)
   posterior.b = dnorm(beta, post.mean.b, post.sd.b)
   
-  old.par = par(mfrow = c(2, 2))
-
-  y.max = max(c(prior.b, likelihood.b, posterior.b))
-  plot(beta, prior.b, type = "l", col = "black", lty = 1, 
-       ylim = c(0, 1.1 * y.max), xlab = expression(beta), 
-       ylab = "", 
-       main = expression(paste("Prior, likelihood and posterior for ", beta, 
-           sep = "")), 
-       sub = "(slope)")
-  lines(beta, likelihood.b, lty = 2, col = "red")
-  lines(beta, posterior.b, lty = 3, col = "blue")
-  legend("topleft", bty = "n", cex = 0.7, 
-         lty = 1:3, col = c("black", "red", "blue"), 
-         legend = c("Prior", "Likelihood", "Posterior"))
-
+  if(drawPlot){
+    old.par = par(mfrow = c(2, 2))
+  
+    y.max = max(c(prior.b, likelihood.b, posterior.b))
+    plot(beta, prior.b, type = "l", col = "black", lty = 1, 
+         ylim = c(0, 1.1 * y.max), xlab = expression(beta), 
+         ylab = "", 
+         main = expression(paste("Prior, likelihood and posterior for ", beta, 
+             sep = "")), 
+         sub = "(slope)")
+    lines(beta, likelihood.b, lty = 2, col = "red")
+    lines(beta, posterior.b, lty = 3, col = "blue")
+    legend("topleft", bty = "n", cex = 0.7, 
+           lty = 1:3, col = c("black", "red", "blue"), 
+           legend = c("Prior", "Likelihood", "Posterior"))
+  }
   ####################################################################################
   
   alpha.xbar = rep(0, 1001)
@@ -257,7 +262,7 @@ bayes.lin.reg = function(y, x, slope.prior = c("flat", "normal"),
   
   y.max = max(c(prior.a, likelihood.a, posterior.a))
   
-  if(Bolstad.control(...)$plot){
+  if(drawPlot){
     plot(alpha.xbar, prior.a, type = "l", col = "black", lty = 1, 
          ylim = c(0, 1.1 * y.max), xlab = expression(alpha), 
          ylab = "", 
@@ -297,29 +302,31 @@ bayes.lin.reg = function(y, x, slope.prior = c("flat", "normal"),
   y.max = max(pred.ub)
   y.min = min(pred.lb)
 
-
-  if(plot.data){
-    plot(y~x, main = paste("Predicitions with ", round(100 * (1 - alpha))
-               ,"% bounds", sep = ""), xlab = "x", ylab = "y", ylim = 1.1 * c(y.min, y.max))
-    lines(x.values, pred.y, lty = 1, col = "black")
-  } else{
-    plot(x.values, pred.y, type = "l", lty = 1, col = "black", 
-         main = paste("Predicitions with ", round(100 * (1 - alpha)), 
-           "% bounds", sep = ""), xlab = "x", ylab = "y", 
-         ylim = 1.1 * c(y.min, y.max))
+  if(drawPlot){
+    if(plot.data){
+      plot(y~x, main = paste("Predicitions with ", round(100 * (1 - alpha))
+                 ,"% bounds", sep = ""), xlab = "x", ylab = "y", ylim = 1.1 * c(y.min, y.max))
+      lines(x.values, pred.y, lty = 1, col = "black")
+    } else if (drawPlot && !plot.data){
+      plot(x.values, pred.y, type = "l", lty = 1, col = "black", 
+           main = paste("Predicitions with ", round(100 * (1 - alpha)), 
+             "% bounds", sep = ""), xlab = "x", ylab = "y", 
+           ylim = 1.1 * c(y.min, y.max))
+    }
+  
+    lines(x.values, pred.lb, lty = 2, col = "red")
+    lines(x.values, pred.ub, lty = 3, col = "blue")
+  
+    legend("topleft", lty = 1:3, col = c("black", "red", "blue"), 
+           legend = c("Predicted value", 
+             paste(round(100 * (1 - alpha)), "% lower bound", sep = ""), 
+             paste(round(100 * (1 - alpha)), "% upper bound", sep = "")), 
+           cex = 0.7, bty = "n")
   }
-
-  lines(x.values, pred.lb, lty = 2, col = "red")
-  lines(x.values, pred.ub, lty = 3, col = "blue")
-
-  legend("topleft", lty = 1:3, col = c("black", "red", "blue"), 
-         legend = c("Predicted value", 
-           paste(round(100 * (1 - alpha)), "% lower bound", sep = ""), 
-           paste(round(100 * (1 - alpha)), "% upper bound", sep = "")), 
-         cex = 0.7, bty = "n")
-
+  
   pred.y = NULL
   pred.se = NULL
+  
   if(!is.null(pred.x)){
     pred.y = post.mean.a + post.mean.b * (pred.x - x.bar)
     pred.se = sqrt(post.var.a + (pred.x - x.bar)^2 * post.var.b + sigma^2)
@@ -340,7 +347,10 @@ bayes.lin.reg = function(y, x, slope.prior = c("flat", "normal"),
     }
   }
 
-  par(old.par)
+  if(drawPlot){
+    par(old.par)
+  }
+  
   interceptResults = list(name = 'alpha[0]',
                           param.x = alpha.xbar,
                           prior = prior.a, likelihood = likelihood.a, posterior = posterior.a,
