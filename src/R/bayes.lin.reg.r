@@ -131,14 +131,18 @@ bayes.lin.reg = function(y, x, slope.prior = c("flat", "normal"),
 
   A0 = y.bar - b.ls * x.bar
   Ax.bar = y.bar
-
+  
+  quiet = Bolstad.control(...)$quiet
+  
   sigma.known = TRUE
   if(is.null(sigma)){
     sigma.known = FALSE
     sigma = sqrt(sum((y - (Ax.bar + b.ls * (x - x.bar)))^2)/ (n - 2))
-    cat(paste("Standard deviation of residuals: ", signif(sigma, 3), "\n"))
+    if(!quiet){cat(paste("Standard deviation of residuals: ", signif(sigma, 3), "\n"))}
   } else {
-    cat(paste("Known standard deviation: ", signif(sigma, 3), "\n"))
+    if(!quiet){
+      cat(paste("Known standard deviation: ", signif(sigma, 3), "\n"))
+    }
   }
 
   SSx = n * (x2.bar - x.bar^2)
@@ -244,23 +248,28 @@ bayes.lin.reg = function(y, x, slope.prior = c("flat", "normal"),
   likelihood.a = dnorm(alpha.xbar, y.bar, sd.ls)
   posterior.a = dnorm(alpha.xbar, post.mean.a, post.sd.a)
 
-  cat(sprintf("%-11s %-14s %-24s\n", " ", "Posterior Mean", "Posterior Std. Deviation"))
-  cat(sprintf("%-11s %-14s %-24s\n", " ", "--------------", "------------------------"))
-  cat(sprintf("Intercept:  %-14.6g %-24.6g\n", signif(post.mean.a, 4), signif(post.sd.a, 5)))
-  cat(sprintf("Slope:      %-14.6g %-24.6g\n", signif(post.mean.b, 4), signif(post.sd.b, 5)))
-
+  if(!quiet){
+    cat(sprintf("%-11s %-14s %-24s\n", " ", "Posterior Mean", "Posterior Std. Deviation"))
+    cat(sprintf("%-11s %-14s %-24s\n", " ", "--------------", "------------------------"))
+    cat(sprintf("Intercept:  %-14.6g %-24.6g\n", signif(post.mean.a, 4), signif(post.sd.a, 5)))
+    cat(sprintf("Slope:      %-14.6g %-24.6g\n", signif(post.mean.b, 4), signif(post.sd.b, 5)))
+  }
+  
   y.max = max(c(prior.a, likelihood.a, posterior.a))
-  plot(alpha.xbar, prior.a, type = "l", col = "black", lty = 1, 
-       ylim = c(0, 1.1 * y.max), xlab = expression(alpha), 
-       ylab = "", 
-       main = expression(paste("Prior, likelihood and posterior for ", alpha[bar(x)], 
-           sep = "")), 
-       sub = "(intercept)")
-  lines(alpha.xbar, likelihood.a, lty = 2, col = "red")
-  lines(alpha.xbar, posterior.a, lty = 3, col = "blue")
-  legend("topleft", cex = 0.7, lty = 1:3, col = c("black", "red", "blue"), 
-         legend = c("Prior", "Likelihood", "Posterior"), bty = "n")
-
+  
+  if(Bolstad.control(...)$plot){
+    plot(alpha.xbar, prior.a, type = "l", col = "black", lty = 1, 
+         ylim = c(0, 1.1 * y.max), xlab = expression(alpha), 
+         ylab = "", 
+         main = expression(paste("Prior, likelihood and posterior for ", alpha[bar(x)], 
+             sep = "")), 
+         sub = "(intercept)")
+    lines(alpha.xbar, likelihood.a, lty = 2, col = "red")
+    lines(alpha.xbar, posterior.a, lty = 3, col = "blue")
+    legend("topleft", cex = 0.7, lty = 1:3, col = c("black", "red", "blue"), 
+           legend = c("Prior", "Likelihood", "Posterior"), bty = "n")
+  }
+  
   if(sigma.known){
     s.e = sqrt(x2.bar - x.bar^2)
     x.lwr = x.bar - 3 * s.e
@@ -318,13 +327,16 @@ bayes.lin.reg = function(y, x, slope.prior = c("flat", "normal"),
     fmt = "%-8.4g  %-12.4g %-11.5g\n"
     fmtS = "%-6s  %-12s %-11s\n"
     
-    cat(sprintf(fmtS, "x", "Predicted y", "SE"))
-    cat(sprintf(fmtS, "------", "-----------", "-----------"))
-    n.pred.x = length(pred.x)
-    for(i in 1:n.pred.x){
-      cat(sprintf(fmt, signif(predicted.values[i, 1], 4), 
-                       signif(predicted.values[i, 2], 4), 
-                       signif(predicted.values[i, 3], 5)))
+    if(!quiet){
+      cat(sprintf(fmtS, "x", "Predicted y", "SE"))
+      cat(sprintf(fmtS, "------", "-----------", "-----------"))
+    
+      n.pred.x = length(pred.x)
+      for(i in 1:n.pred.x){
+        cat(sprintf(fmt, signif(predicted.values[i, 1], 4), 
+                         signif(predicted.values[i, 2], 4), 
+                         signif(predicted.values[i, 3], 5)))
+      }
     }
   }
 

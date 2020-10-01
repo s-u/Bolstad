@@ -78,8 +78,8 @@ poisgamp = function(y, shape, rate = 1, scale = 1 / rate,
   if(shape < 0 || rate < 0)
     stop("Shape parameter and rate parameter must be greater than or equal to zero")
   
-  suppressOutput = Bolstad.control(...)$quiet
-  if(!suppressOutput){
+  quiet = Bolstad.control(...)$quiet
+  if(!quiet){
     cat("Summary statistics for data\n")
     cat("---------------------------\n")
     cat(paste("Number of observations:\t", n, "\n"))
@@ -120,7 +120,7 @@ poisgamp = function(y, shape, rate = 1, scale = 1 / rate,
   posterior = dgamma(mu, shapePost, ratePost)
   credInt = qgamma(c(alpha * 0.5 , 1 - alpha * 0.5), shapePost, ratePost)
   
-  if(!suppressOutput){
+  if(!quiet){
     cat("Summary statistics for posterior\n")
     cat("--------------------------------\n")
     cat(paste("Shape parameter (r):\t", shapePost, "\n"))

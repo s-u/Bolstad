@@ -65,14 +65,19 @@ normdp = function(x, sigma.x = NULL, mu = NULL, mu.prior = NULL, n.mu = 50, ...)
   }
 
   mx = mean(x)
+  quiet = Bolstad.control(...)$quiet
 
   if(is.null(sigma.x)){
     sigma.x = sd(x-mx)
-    cat(paste("Standard deviation of the residuals :"
-              ,signif(sigma.x,4),"\n",sep=""))
+    if(!quiet){
+      cat(paste("Standard deviation of the residuals :"
+                ,signif(sigma.x,4),"\n",sep=""))
+    }
   }else{
     if(sigma.x>0){
-      cat(paste("Known standard deviation :",signif(sigma.x,4),"\n",sep=""))
+      if(!quiet){
+        cat(paste("Known standard deviation :",signif(sigma.x,4),"\n",sep=""))
+      }
     }else{
       stop("The standard deviation must be greater than zero")
     }

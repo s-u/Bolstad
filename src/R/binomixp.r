@@ -85,22 +85,27 @@ binomixp = function(x, n, alpha0 = c(1, 1), alpha1 = c(1, 1), p = 0.5, ...) {
   f0 = exp(log0)
   f1 = exp(log1)
   
-  cat("Prior probability of the data under component 0\n")
-  cat("----------------------------\n")
-  cat(paste("Log prob.:", signif(log0, 3), "\nProbability: ", signif(f0, 5), "\n\n"))
+  quiet = Bolstad.control(...)$quiet
   
-  cat("Prior probability of the data under component 1\n")
-  cat("----------------------------\n")
-  cat(paste("Log prob.:", signif(log1, 3), "\nProbability: ", signif(f1, 5), "\n\n"))
-  
+  if(!quiet){
+    cat("Prior probability of the data under component 0\n")
+    cat("----------------------------\n")
+    cat(paste("Log prob.:", signif(log0, 3), "\nProbability: ", signif(f0, 5), "\n\n"))
+    
+    cat("Prior probability of the data under component 1\n")
+    cat("----------------------------\n")
+    cat(paste("Log prob.:", signif(log1, 3), "\nProbability: ", signif(f1, 5), "\n\n"))
+  }
   
   q0 = p
   q1 = 1 - q0
   qp0 = q0 * f0/(q0 * f0 + q1 * f1)
   qp1 = 1 - qp0
   
-  cat(paste("Post. mixing proportion for component 0:", signif(qp0, 3), "\n"))
-  cat(paste("Post. mixing proportion for component 1:", signif(qp1, 3), "\n"))
+  if(!quiet){
+    cat(paste("Post. mixing proportion for component 0:", signif(qp0, 3), "\n"))
+    cat(paste("Post. mixing proportion for component 1:", signif(qp1, 3), "\n"))
+  }
   
   pi = seq(0, 1, by = 0.001)
   prior.0 = dbeta(pi, alpha0[1], alpha0[2])

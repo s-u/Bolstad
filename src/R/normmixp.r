@@ -81,47 +81,54 @@ normmixp = function(x, sigma.x, prior0, prior1, p = 0.5, mu = NULL, n.mu = max(1
   post.sd1 = sqrt(post.var1)
   post.mean1 = (prior.means[2] / (prior.sds[2]^2 * post.prec1)) + (n * x.bar / (sigma.x^2 * post.prec1))
 
-  cat("Posterior summary statistics of component 0\n")
-  cat("--------------------------------------------\n")
-  cat(paste("Mean:\t\t", signif(post.mean0, 3), "\n"))
-  cat(paste("Std. Dev.:\t", signif(post.sd0, 4), "\n"))
-  cat(paste("Variance:\t", signif(post.var0, 4), "\n"))
-  cat(paste("Precision:\t", signif(post.prec0, 4), "\n\n"))
-
-  cat("Posterior summary statistics of component 1\n")
-  cat("-------------------------------------------\n")
-  cat(paste("Mean:\t\t", signif(post.mean1, 3), "\n"))
-  cat(paste("Std. Dev.:\t", signif(post.sd1, 4), "\n"))
-  cat(paste("Variance:\t", signif(post.var1, 4), "\n"))
-  cat(paste("Precision:\t", signif(post.prec1, 4), "\n\n"))
-
+  quiet = Bolstad.control(...)$quiet
+  if(!quiet){
+    cat("Posterior summary statistics of component 0\n")
+    cat("--------------------------------------------\n")
+    cat(paste("Mean:\t\t", signif(post.mean0, 3), "\n"))
+    cat(paste("Std. Dev.:\t", signif(post.sd0, 4), "\n"))
+    cat(paste("Variance:\t", signif(post.var0, 4), "\n"))
+    cat(paste("Precision:\t", signif(post.prec0, 4), "\n\n"))
+  
+    cat("Posterior summary statistics of component 1\n")
+    cat("-------------------------------------------\n")
+    cat(paste("Mean:\t\t", signif(post.mean1, 3), "\n"))
+    cat(paste("Std. Dev.:\t", signif(post.sd1, 4), "\n"))
+    cat(paste("Variance:\t", signif(post.var1, 4), "\n"))
+    cat(paste("Precision:\t", signif(post.prec1, 4), "\n\n"))
+  }
 
   sd.x = sqrt(sigma.x^2 / n + prior.sds[1]^2)
   f0 = dnorm(x.bar, prior.means[1], sd.x)
 
-  cat("Predictive density of the sample mean under component 0\n")
-  cat("------------------------------------------------------\n")
-  cat(paste("Sample mean:\t", signif(x.bar, 3), "\n"))
-  cat(paste("Pred. mean:\t", signif(prior.means[1], 3), "\n"))
-  cat(paste("Pred. SD:\t", signif(sd.x, 4), "\n"))
-  cat(paste("Density:\t", signif(f0, 4), "\n\n"))
-
+  if(!quiet){
+    cat("Predictive density of the sample mean under component 0\n")
+    cat("------------------------------------------------------\n")
+    cat(paste("Sample mean:\t", signif(x.bar, 3), "\n"))
+    cat(paste("Pred. mean:\t", signif(prior.means[1], 3), "\n"))
+    cat(paste("Pred. SD:\t", signif(sd.x, 4), "\n"))
+    cat(paste("Density:\t", signif(f0, 4), "\n\n"))
+  }
 
   sd.x = sqrt(sigma.x^2 / n + prior.sds[2]^2)
   f1 = dnorm(x.bar, prior.means[2], sd.x)
 
-  cat("Predictive density of the sample mean under component 1\n")
-  cat("------------------------------------------------------\n")
-  cat(paste("Sample mean:\t", signif(x.bar, 3), "\n"))
-  cat(paste("Pred. mean:\t", signif(prior.means[2], 3), "\n"))
-  cat(paste("Pred. SD:\t", signif(sd.x, 4), "\n"))
-  cat(paste("Density:\t", signif(f1, 4), "\n\n"))
-
+  if(!quiet){
+    cat("Predictive density of the sample mean under component 1\n")
+    cat("------------------------------------------------------\n")
+    cat(paste("Sample mean:\t", signif(x.bar, 3), "\n"))
+    cat(paste("Pred. mean:\t", signif(prior.means[2], 3), "\n"))
+    cat(paste("Pred. SD:\t", signif(sd.x, 4), "\n"))
+    cat(paste("Density:\t", signif(f1, 4), "\n\n"))
+  }
+  
   qp0 = q0 * f0 / (q0 * f0 + q1 * f1)
   qp1 = 1 - qp0
 
-  cat(paste("Post. mixing proportion for component 0:\t", signif(qp0, 3), "\n"))
-  cat(paste("Post. mixing proportion for component 1:\t", signif(qp1, 3), "\n"))
+  if(!quiet){
+    cat(paste("Post. mixing proportion for component 0:\t", signif(qp0, 3), "\n"))
+    cat(paste("Post. mixing proportion for component 1:\t", signif(qp1, 3), "\n"))
+  }
 
   step.size = k1 = k2 = 0
   if(is.null(mu)){

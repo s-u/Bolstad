@@ -11,6 +11,7 @@
 #' @param size the size of the treatment groups
 #' @param n.treatments the number of treatments
 #' @param n.rep the number of Monte Carlo replicates
+#' @param \dots additional parameters which are passed to \code{Bolstad.control}
 #' @return If the ouput of xdesign is assigned to a variable, then a list is
 #' returned with the following components: \item{block.means}{a vector of the
 #' means of the lurking variable from each replicate of the simulation stored
@@ -36,7 +37,7 @@
 #' 
 #' @export xdesign
 xdesign = function(x = NULL, y = NULL, corr = 0.8, size = 20,
-                   n.treatments = 4, n.rep = 500){
+                   n.treatments = 4, n.rep = 500, ...){
 
     if(is.null(x)){ ## simulate some data
         nx = size*n.treatments
@@ -58,6 +59,8 @@ xdesign = function(x = NULL, y = NULL, corr = 0.8, size = 20,
 
     if(n.rep < 10)
         stop("Must have at least 10 Monte Carlo replicates")
+    
+    quiet = Bolstad.control(...)$quiet
 
     cat("Variable\tN\tMean\tMedian\tTrMean\tStDev\tSE Mean\n")
     cat(paste("X\t",length(x),

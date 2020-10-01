@@ -136,8 +136,8 @@ binodp = function(x, n, pi = NULL, pi.prior = NULL, n.pi = 10,
   f.marg = matrix(1,nrow=1,ncol=n.pi)%*%f.joint
   
   
-  suppressOutput = Bolstad.control(...)$quiet
-  if(!suppressOutput){
+  quiet = Bolstad.control(...)$quiet
+  if(!quiet){
     cat("Conditional distribution of x given pi and  n:\n\n")
     print(round(f.cond,4))
   

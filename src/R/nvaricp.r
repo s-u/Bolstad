@@ -38,15 +38,15 @@
 #' @export nvaricp
 nvaricp = function(y, mu, S0, kappa, ...){
   
-  dots = list(...)
-  cred.int = dots[[pmatch("cred.int", names(dots))]]
-  alpha = dots[[pmatch("alpha", names(dots))]]
-  
-  if(is.null(cred.int))
-    cred.int = FALSE
-  
-  if(is.null(alpha))
-    alpha = 0.05
+  # dots = list(...)
+  # cred.int = dots[[pmatch("cred.int", names(dots))]]
+  # alpha = dots[[pmatch("alpha", names(dots))]]
+  # 
+  # if(is.null(cred.int))
+  #   cred.int = FALSE
+  # 
+  # if(is.null(alpha))
+  #   alpha = 0.05
   
   n = length(y)
   SST = sum((y-mu)^2)
@@ -163,34 +163,36 @@ nvaricp = function(y, mu, S0, kappa, ...){
     }
   }
 
-  cat(paste("S1: ",signif(S1,4)," kappa1 :", signif(kappa1,3),"\n",sep = ""))
-
-  if(cred.int){
-    msg = paste0("This argument is deprecated and will not be supported in future releases.",
-                 "\nPlease use the quantile function instead.\n")
-    warning(msg)
-    
-    if(kappa1<2)
-      cat("Unable to calculate credible interval for sigma if kappa1<= 2\n")
-    else{
-      sigmahat.post.mean = sqrt(S1/(kappa1-2))
-      cat(paste("Estimate of sigma using posterior mean: ",
-                signif(sigmahat.post.mean,4),"\n",sep = ""))
-    }
-
-    q50 = qchisq(p = 0.5, df = kappa1)
-    sigmahat.post.median = sqrt(S1/q50)
-    cat(paste("Estimate of sigma using posterior median: ",
-              signif(sigmahat.post.median,4),"\n",sep = ""))
-
-    ci = sqrt(S1 / qchisq(p = 1 - c(alpha * 0.5, 1 - alpha * 0.5), df = kappa1))
-    ciStr = sprintf("%d%% credible interval for sigma: [%4g, %4g]\n", round(100 * (1 - alpha)), signif(ci[1], 4), signif(ci[2], 4))
-    cat(ciStr)
-    
-    if(Bolstad.control(...)$plot)
-      abline(v = ci, col = "blue", lty = 3)
-
+  if(!Bolstad.control(...)$quiet){
+    cat(paste("S1: ",signif(S1,4)," kappa1 :", signif(kappa1,3),"\n",sep = ""))
   }
+
+  # if(cred.int){
+  #   msg = paste0("This argument is deprecated and will not be supported in future releases.",
+  #                "\nPlease use the quantile function instead.\n")
+  #   warning(msg)
+  #   
+  #   if(kappa1<2)
+  #     cat("Unable to calculate credible interval for sigma if kappa1<= 2\n")
+  #   else{
+  #     sigmahat.post.mean = sqrt(S1/(kappa1-2))
+  #     cat(paste("Estimate of sigma using posterior mean: ",
+  #               signif(sigmahat.post.mean,4),"\n",sep = ""))
+  #   }
+  # 
+  #   q50 = qchisq(p = 0.5, df = kappa1)
+  #   sigmahat.post.median = sqrt(S1/q50)
+  #   cat(paste("Estimate of sigma using posterior median: ",
+  #             signif(sigmahat.post.median,4),"\n",sep = ""))
+  # 
+  #   ci = sqrt(S1 / qchisq(p = 1 - c(alpha * 0.5, 1 - alpha * 0.5), df = kappa1))
+  #   ciStr = sprintf("%d%% credible interval for sigma: [%4g, %4g]\n", round(100 * (1 - alpha)), signif(ci[1], 4), signif(ci[2], 4))
+  #   cat(ciStr)
+  #   
+  #   if(Bolstad.control(...)$plot)
+  #     abline(v = ci, col = "blue", lty = 3)
+  # 
+  # }
 
 
   results = list(param.x = sigma, prior = prior, likelihood = likelihood,

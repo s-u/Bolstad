@@ -122,10 +122,14 @@ normgcp = function(x, sigma.x = NULL, density = c("uniform", "normal", "flat", "
 
   if(is.null(sigma.x)){
     sigma.x = sd(x - mean.x)
-    cat(paste("Standard deviation of the residuals :",
-              signif(sigma.x,4),"\n", sep = ""))
+    if(!Bolstad.control(...)$quiet){
+      cat(paste("Standard deviation of the residuals :",
+                signif(sigma.x,4),"\n", sep = ""))
+    }
   }else{
-    cat(paste("Known standard deviation :", signif(sigma.x, 4),"\n",sep=""))
+    if(!Bolstad.control(...)$quiet){
+      cat(paste("Known standard deviation :", signif(sigma.x, 4),"\n",sep=""))
+    }
   }
 
   density = match.arg(density)
