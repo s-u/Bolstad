@@ -1,14 +1,14 @@
 Package: Bolstad
-Version: 0.2-41
-Date: 2020-09-25
+Version: 0.2.42
+Date: 2024-10-22
 Title: Functions for Elementary Bayesian Inference
-Authors@R: person("James", "Curran", email = "j.curran@auckland.ac.nz",
-                  role = c("aut", "cre"))
+Authors@R: c(person("James", "Curran", role = c("aut", "cre"), email =
+    "j.curran@auckland.ac.nz", comment = "Original author"))
 Description: A set of R functions and data sets for the book Introduction to Bayesian Statistics, Bolstad, W.M. (2017), John Wiley & Sons ISBN 978-1-118-09156-2.
 License: GPL (>= 2)
 LazyData: true
-Depends: R (>= 3.2.0)
+Depends: R (>= 4.2.0)
 Imports:
-  mvtnorm
-RoxygenNote: 7.1.1
+  mvtnorm, methods
 Encoding: UTF-8
+RoxygenNote: 7.3.2

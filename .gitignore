@@ -1,10 +1,8 @@
 .Rproj.user
 .Rhistory
 .RData
-src/man/*.Rd
-src/NAMESPACE
+man/*.Rd
+NAMESPACE
 .DS_Store
-Bolstad.Rcheck
-Bolstad.Rcheck/*
 
 
