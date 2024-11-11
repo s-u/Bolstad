@@ -20,7 +20,7 @@ jobs:
       - uses: s-u/R-actions/tinytex@v1
 
       - name: Install R
-        uses: s-u/R-actions/install@v2
+        uses: s-u/R-actions/install@master
         with:
           r-version: ${{ matrix.r-version }}
           tools: base
